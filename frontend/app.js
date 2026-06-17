@@ -1,4 +1,5 @@
-const sampleEmail = `Subject: Inquiry for office chairs
+const sampleEmails = {
+  complete: `Subject: Inquiry for office chairs
 
 Hello,
 
@@ -9,7 +10,31 @@ Could you send quotation for 500 units and share lead time? Our budget is around
 Best regards,
 Anna Keller
 anna.keller@brighthome.de
-+49 30 1234 7788`;
++49 30 1234 7788`,
+  missing: `Subject: Product catalog request
+
+Dear Sales Team,
+
+I am Marco from CasaNova Trading in Italy. We are looking for outdoor dining tables for our retail stores.
+
+Please send your product catalog, MOQ, and available colors. We are still checking the quantity and budget internally.
+
+Regards,
+Marco Bianchi
+marco@casanova-trading.it`,
+  urgent: `Subject: Urgent quotation needed
+
+Hi,
+
+This is Daniel at NorthPeak Supplies from Canada. We need 1200 sets of metal storage racks for a warehouse project.
+
+Please quote as soon as possible. Our deadline is within 3 days because the client wants to confirm supplier immediately.
+
+Thanks,
+Daniel Smith
+daniel.smith@northpeak.ca
++1 416 555 9088`,
+};
 
 const state = {
   extracted: null,
@@ -35,7 +60,7 @@ const fields = [
 const emailInput = document.querySelector("#emailInput");
 const extractBtn = document.querySelector("#extractBtn");
 const saveBtn = document.querySelector("#saveBtn");
-const sampleBtn = document.querySelector("#sampleBtn");
+const sampleButtons = document.querySelectorAll(".sample-btn");
 const refreshBtn = document.querySelector("#refreshBtn");
 const statusText = document.querySelector("#statusText");
 const resultGrid = document.querySelector("#resultGrid");
@@ -204,13 +229,20 @@ async function review(action) {
     method: "PATCH",
     body: JSON.stringify(payload),
   });
+  setStatus(action === "confirmed" ? "线索已确认，审核记录已保存。" : "线索已拒绝，审核记录已保存。");
   await loadLeads();
   await selectLead(state.selectedLeadId);
 }
 
-sampleBtn.addEventListener("click", () => {
-  emailInput.value = sampleEmail;
-  setStatus("已填入示例邮件。");
+sampleButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    const sample = sampleEmails[button.dataset.sample];
+    emailInput.value = sample;
+    state.extracted = null;
+    state.rawEmail = "";
+    saveBtn.disabled = true;
+    setStatus(`已填入${button.textContent}示例邮件。`);
+  });
 });
 extractBtn.addEventListener("click", extractLead);
 saveBtn.addEventListener("click", saveLead);

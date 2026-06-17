@@ -159,6 +159,13 @@ button:disabled {
   margin-top: 12px;
 }
 
+.sample-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
 .status-text {
   color: var(--muted);
   font-size: 13px;

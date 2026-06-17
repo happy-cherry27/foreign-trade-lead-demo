@@ -147,6 +147,21 @@ def first_match(patterns: list[str], text: str, default: str = "unknown") -> str
     return default
 
 
+def normalize_name(value: str) -> str:
+    parts = [part for part in value.split() if "@" not in part]
+    return " ".join(parts[:3]) or "unknown"
+
+
+def normalize_company(value: str) -> str:
+    cleaned = re.sub(
+        r"\s+(?:in|from)\s+(Germany|United States|USA|Canada|Australia|United Kingdom|UK|France|Italy|Spain|Brazil|India|UAE|Saudi Arabia|Mexico|Netherlands)\b.*$",
+        "",
+        value,
+        flags=re.IGNORECASE,
+    )
+    return cleaned.strip(" .,:;") or "unknown"
+
+
 def infer_country(text: str) -> str:
     countries = [
         "Germany",
@@ -200,19 +215,21 @@ def extract_lead(raw_email: str) -> dict[str, Any]:
     phone = first_match([r"(\+?\d[\d\s().-]{7,}\d)"], text)
     name = first_match(
         [
-            r"(?:Best regards|Regards|Sincerely|Thanks|Thank you),?\s*\n\s*([A-Z][A-Za-z\s]{1,40})",
-            r"(?:I am|I'm|This is)\s+([A-Z][A-Za-z\s]{1,40})",
+            r"(?:Best regards|Regards|Sincerely|Thanks|Thank you),?\s*\n\s*([A-Z][A-Za-z .'-]{1,40})",
+            r"(?:I am|I'm|This is)\s+([A-Z][A-Za-z .'-]{1,40})(?:\s+(?:from|at)\b|[,.]|\n)",
             r"Name:\s*([^\n]+)",
         ],
         text,
     )
+    name = normalize_name(name) if name != "unknown" else name
     company = first_match(
         [
-            r"(?:from|at)\s+([A-Z][A-Za-z0-9&.,\-\s]{2,60})(?:\.|,|\n)",
+            r"(?:from|at)\s+([A-Z][A-Za-z0-9&.,\- ]{2,60}?)(?:\s+(?:in|from)\s+[A-Z][A-Za-z ]+|\.|,|\n)",
             r"Company:\s*([^\n]+)",
         ],
         text,
     )
+    company = normalize_company(company) if company != "unknown" else company
     product_need = first_match(
         [
             r"(?:interested in|looking for|need|purchase|buy)\s+([A-Za-z0-9,\-\s]{3,80})(?:\.|,|\n)",
@@ -221,7 +238,13 @@ def extract_lead(raw_email: str) -> dict[str, Any]:
         text,
     )
     quantity = first_match([r"(\d{2,6}\s*(?:pcs|pieces|units|sets|containers|cartons))"], text)
-    budget = first_match([r"(?:budget is|budget around|budget:)\s*([^\n.]+)", r"(\$[0-9,]+(?:\s*-\s*\$[0-9,]+)?)"], text)
+    budget = first_match(
+        [
+            r"(?:budget is|budget around|budget:)\s*(\$?[0-9,]+(?:\s*-\s*\$?[0-9,]+)?)",
+            r"(\$[0-9,]+(?:\s*-\s*\$[0-9,]+)?)",
+        ],
+        text,
+    )
     country = infer_country(text)
     priority, priority_evidence = infer_priority(text)
     follow_up_time, follow_up_time_evidence = infer_follow_up_time(priority, text)
