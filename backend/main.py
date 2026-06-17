@@ -368,21 +368,23 @@ def list_leads(status: str | None = None) -> list[dict[str, Any]]:
 
 @app.get("/api/leads/export.csv")
 def export_leads_csv() -> Response:
-    columns = [
-        "id",
-        "name",
-        "email",
-        "company",
-        "country",
-        "phone",
-        "product_need",
-        "budget",
-        "quantity",
-        "priority",
-        "follow_up_time",
-        "status",
-        "created_at",
-    ]
+    columns = {
+        "id": "线索ID",
+        "name": "客户姓名",
+        "email": "邮箱",
+        "company": "公司",
+        "country": "国家",
+        "phone": "电话",
+        "product_need": "产品需求",
+        "budget": "预算",
+        "quantity": "数量",
+        "priority": "优先级",
+        "follow_up_time": "适合跟进时间",
+        "status": "审核状态",
+        "created_at": "创建时间",
+    }
+    priority_labels = {"high": "高", "medium": "中", "low": "低"}
+    status_labels = {"pending_review": "待审核", "confirmed": "已确认", "rejected": "已拒绝"}
     with get_conn() as conn:
         rows = conn.execute(
             """
@@ -394,13 +396,22 @@ def export_leads_csv() -> Response:
         ).fetchall()
 
     output = io.StringIO()
-    writer = csv.DictWriter(output, fieldnames=columns)
+    writer = csv.DictWriter(output, fieldnames=list(columns.values()))
     writer.writeheader()
     for row in rows:
-        writer.writerow({column: row[column] for column in columns})
+        writer.writerow(
+            {
+                label: priority_labels.get(row[column], row[column])
+                if column == "priority"
+                else status_labels.get(row[column], row[column])
+                if column == "status"
+                else row[column]
+                for column, label in columns.items()
+            }
+        )
 
     return Response(
-        content=output.getvalue(),
+        content="\ufeff" + output.getvalue(),
         media_type="text/csv; charset=utf-8",
         headers={"Content-Disposition": 'attachment; filename="foreign_trade_leads.csv"'},
     )
