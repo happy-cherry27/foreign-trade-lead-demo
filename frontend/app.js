@@ -235,6 +235,27 @@ async function review(action) {
   await selectLead(state.selectedLeadId);
 }
 
+async function exportCsv() {
+  setStatus("正在生成 CSV...");
+  try {
+    const response = await fetch("/api/leads/export.csv");
+    if (!response.ok) throw new Error(`CSV export failed: ${response.status}`);
+    const csvText = await response.text();
+    const blob = new Blob([csvText], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "foreign_trade_leads.csv";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    setStatus("CSV 已生成。如果当前浏览器没有下载提示，请直接打开 /api/leads/export.csv。");
+  } catch (error) {
+    setStatus(error.message, true);
+  }
+}
+
 sampleButtons.forEach((button) => {
   button.addEventListener("click", () => {
     const sample = sampleEmails[button.dataset.sample];
@@ -247,9 +268,7 @@ sampleButtons.forEach((button) => {
 });
 extractBtn.addEventListener("click", extractLead);
 saveBtn.addEventListener("click", saveLead);
-exportBtn.addEventListener("click", () => {
-  window.location.href = "/api/leads/export.csv";
-});
+exportBtn.addEventListener("click", exportCsv);
 refreshBtn.addEventListener("click", loadLeads);
 statusFilter.addEventListener("change", loadLeads);
 confirmBtn.addEventListener("click", () => review("confirmed"));
