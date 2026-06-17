@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>外贸客户邮件线索自动录入与跟进建议系统</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <div>
+      <p class="eyebrow">Foreign Trade Lead Desk</p>
+      <h1>外贸客户邮件线索自动录入与跟进建议系统</h1>
+    </div>
+    <button id="refreshBtn" class="ghost-button" type="button">刷新线索</button>
+  </header>
+
+  <main class="layout">
+    <section class="panel input-panel" aria-labelledby="inputTitle">
+      <div class="panel-heading">
+        <div>
+          <p class="eyebrow">Step 1</p>
+          <h2 id="inputTitle">邮件录入</h2>
+        </div>
+        <button id="sampleBtn" class="ghost-button" type="button">填入示例</button>
+      </div>
+      <label for="emailInput">客户邮件正文</label>
+      <textarea id="emailInput" spellcheck="false" placeholder="粘贴客户邮件正文..."></textarea>
+      <div class="button-row">
+        <button id="extractBtn" type="button">抽取客户线索</button>
+        <button id="saveBtn" type="button" disabled>保存线索</button>
+      </div>
+      <p id="statusText" class="status-text">等待输入邮件。</p>
+    </section>
+
+    <section class="panel result-panel" aria-labelledby="resultTitle">
+      <div class="panel-heading">
+        <div>
+          <p class="eyebrow">Step 2</p>
+          <h2 id="resultTitle">抽取结果</h2>
+        </div>
+        <span id="confidenceBadge" class="badge muted">未抽取</span>
+      </div>
+      <dl id="resultGrid" class="result-grid"></dl>
+      <div class="evidence-box">
+        <h3>判断依据</h3>
+        <ul id="evidenceList"></ul>
+      </div>
+    </section>
+
+    <section class="panel list-panel" aria-labelledby="listTitle">
+      <div class="panel-heading">
+        <div>
+          <p class="eyebrow">Step 3</p>
+          <h2 id="listTitle">线索列表</h2>
+        </div>
+        <select id="statusFilter" aria-label="按状态筛选">
+          <option value="">全部</option>
+          <option value="pending_review">待审核</option>
+          <option value="confirmed">已确认</option>
+          <option value="rejected">已拒绝</option>
+        </select>
+      </div>
+      <div id="leadList" class="lead-list"></div>
+    </section>
+
+    <section class="panel detail-panel" aria-labelledby="detailTitle">
+      <div class="panel-heading">
+        <div>
+          <p class="eyebrow">Step 4</p>
+          <h2 id="detailTitle">线索详情与人工审核</h2>
+        </div>
+        <span id="detailStatus" class="badge muted">未选择</span>
+      </div>
+      <form id="reviewForm" class="review-form">
+        <div class="form-grid">
+          <label>客户姓名<input name="name" type="text"></label>
+          <label>邮箱<input name="email" type="text"></label>
+          <label>公司<input name="company" type="text"></label>
+          <label>国家<input name="country" type="text"></label>
+          <label>电话<input name="phone" type="text"></label>
+          <label>产品需求<input name="product_need" type="text"></label>
+          <label>预算<input name="budget" type="text"></label>
+          <label>数量<input name="quantity" type="text"></label>
+          <label>紧急程度<input name="urgency" type="text"></label>
+          <label>优先级<input name="priority" type="text"></label>
+          <label>适合跟进时间<input name="follow_up_time" type="text"></label>
+        </div>
+        <label>跟进建议<textarea name="follow_up_suggestion"></textarea></label>
+        <label>审核备注<input name="reviewer_note" type="text" placeholder="例如：确认该客户为高意向，需当天回复"></label>
+        <div class="button-row">
+          <button id="confirmBtn" type="button" disabled>确认线索</button>
+          <button id="rejectBtn" class="danger-button" type="button" disabled>拒绝线索</button>
+        </div>
+      </form>
+      <details class="raw-email">
+        <summary>原始邮件</summary>
+        <pre id="rawEmailText"></pre>
+      </details>
+      <div class="evidence-box">
+        <h3>日志</h3>
+        <pre id="logText">选择线索后显示日志。</pre>
+      </div>
+    </section>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
