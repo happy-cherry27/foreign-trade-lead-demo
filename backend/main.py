@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import csv
+import io
 import json
 import re
 import sqlite3
@@ -9,7 +11,7 @@ from typing import Any
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
@@ -362,6 +364,46 @@ def list_leads(status: str | None = None) -> list[dict[str, Any]]:
         else:
             rows = conn.execute("SELECT * FROM leads ORDER BY id DESC").fetchall()
     return [row_to_lead(row) for row in rows]
+
+
+@app.get("/api/leads/export.csv")
+def export_leads_csv() -> Response:
+    columns = [
+        "id",
+        "name",
+        "email",
+        "company",
+        "country",
+        "phone",
+        "product_need",
+        "budget",
+        "quantity",
+        "priority",
+        "follow_up_time",
+        "status",
+        "created_at",
+    ]
+    with get_conn() as conn:
+        rows = conn.execute(
+            """
+            SELECT id, name, email, company, country, phone, product_need, budget, quantity,
+                   priority, follow_up_time, status, created_at
+            FROM leads
+            ORDER BY id DESC
+            """
+        ).fetchall()
+
+    output = io.StringIO()
+    writer = csv.DictWriter(output, fieldnames=columns)
+    writer.writeheader()
+    for row in rows:
+        writer.writerow({column: row[column] for column in columns})
+
+    return Response(
+        content=output.getvalue(),
+        media_type="text/csv; charset=utf-8",
+        headers={"Content-Disposition": 'attachment; filename="foreign_trade_leads.csv"'},
+    )
 
 
 @app.get("/api/leads/{lead_id}")

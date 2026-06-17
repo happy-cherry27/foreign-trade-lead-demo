@@ -61,6 +61,7 @@ const emailInput = document.querySelector("#emailInput");
 const extractBtn = document.querySelector("#extractBtn");
 const saveBtn = document.querySelector("#saveBtn");
 const sampleButtons = document.querySelectorAll(".sample-btn");
+const exportBtn = document.querySelector("#exportBtn");
 const refreshBtn = document.querySelector("#refreshBtn");
 const statusText = document.querySelector("#statusText");
 const resultGrid = document.querySelector("#resultGrid");
@@ -246,6 +247,9 @@ sampleButtons.forEach((button) => {
 });
 extractBtn.addEventListener("click", extractLead);
 saveBtn.addEventListener("click", saveLead);
+exportBtn.addEventListener("click", () => {
+  window.location.href = "/api/leads/export.csv";
+});
 refreshBtn.addEventListener("click", loadLeads);
 statusFilter.addEventListener("change", loadLeads);
 confirmBtn.addEventListener("click", () => review("confirmed"));
