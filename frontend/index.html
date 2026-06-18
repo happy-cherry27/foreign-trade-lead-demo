@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>外贸客户邮件线索自动录入与跟进建议系统</title>
-  <link rel="stylesheet" href="/static/styles.css">
+  <link rel="stylesheet" href="/static/styles.css?v=20260618-longtext">
 </head>
 <body>
   <header class="app-header">
@@ -33,9 +33,11 @@
       </div>
       <label for="emailInput">客户邮件正文</label>
       <textarea id="emailInput" spellcheck="false" placeholder="粘贴客户邮件正文..."></textarea>
+      <label for="batchInput">批量导入 txt / eml 邮件<input id="batchInput" type="file" accept=".txt,.eml" multiple></label>
       <div class="button-row">
         <button id="extractBtn" type="button">抽取客户线索</button>
         <button id="saveBtn" type="button" disabled>保存线索</button>
+        <button id="batchImportBtn" class="ghost-button" type="button">批量导入</button>
       </div>
       <p id="statusText" class="status-text">等待输入邮件。</p>
     </section>
@@ -48,10 +50,23 @@
         </div>
         <span id="confidenceBadge" class="badge muted">未抽取</span>
       </div>
-      <dl id="resultGrid" class="result-grid"></dl>
+      <div id="scoreSummary" class="score-summary"></div>
+      <div id="resultGrid" class="result-grid"></div>
       <div class="evidence-box">
-        <h3>判断依据</h3>
+        <h3>评分拆解</h3>
+        <ul id="scoreBreakdownList"></ul>
+      </div>
+      <div class="evidence-box">
+        <h3>下一步动作</h3>
         <ul id="evidenceList"></ul>
+      </div>
+      <div class="evidence-box">
+        <h3>英文回复草稿</h3>
+        <pre id="replyDraftText">抽取后生成。</pre>
+      </div>
+      <div class="evidence-box">
+        <h3>缺字段追问</h3>
+        <ul id="qualificationQuestionList"></ul>
       </div>
     </section>
 
@@ -92,12 +107,15 @@
           <label>紧急程度<input name="urgency" type="text"></label>
           <label>优先级<input name="priority" type="text"></label>
           <label>适合跟进时间<input name="follow_up_time" type="text"></label>
+          <label>线索评分<input name="lead_score" type="text" disabled></label>
         </div>
         <label>跟进建议<textarea name="follow_up_suggestion"></textarea></label>
+        <label>英文回复草稿<textarea name="reply_draft"></textarea></label>
         <label>审核备注<input name="reviewer_note" type="text" placeholder="例如：确认该客户为高意向，需当天回复"></label>
         <div class="button-row">
           <button id="confirmBtn" type="button" disabled>确认线索</button>
           <button id="rejectBtn" class="danger-button" type="button" disabled>拒绝线索</button>
+          <button id="syncFeishuBtn" class="ghost-button" type="button" disabled>同步飞书 Mock</button>
         </div>
       </form>
       <details class="raw-email">
@@ -105,8 +123,8 @@
         <pre id="rawEmailText"></pre>
       </details>
       <div class="evidence-box">
-        <h3>日志</h3>
-        <pre id="logText">选择线索后显示日志。</pre>
+        <h3>时间线</h3>
+        <div id="timelineList" class="timeline-list">选择线索后显示时间线。</div>
       </div>
     </section>
   </main>

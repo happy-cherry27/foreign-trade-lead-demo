@@ -15,6 +15,12 @@ env/
 *.sqlite
 *.sqlite3
 *.log
+outputs/
+memory/
+
+# Local presentation/interview notes
+docs/interview_demo_and_qa.md
+showcase_trade_ai_interaction_交接说明.md
 
 # OS/editor files
 .DS_Store

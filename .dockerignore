@@ -1,0 +1,14 @@
+.git
+.venv
+venv
+env
+__pycache__
+*.pyc
+*.db
+*.sqlite
+*.sqlite3
+outputs
+memory
+.env
+.vscode
+.idea

@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: foreign-trade-lead-ai
+    env: docker
+    plan: free
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: CORS_ALLOW_ORIGINS
+        value: "*"
