@@ -47,6 +47,11 @@ def on_startup() -> None:
 
 @app.get("/")
 def index() -> FileResponse:
+    return FileResponse(DOCS_DIR / "showcase.html")
+
+
+@app.get("/app")
+def app_index() -> FileResponse:
     return FileResponse(FRONTEND_DIR / "index.html")
 
 

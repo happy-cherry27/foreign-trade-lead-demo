@@ -12,8 +12,9 @@
 - `Dockerfile`：打包 FastAPI、前端页面和展示页。
 - `render.yaml`：Render 可识别的 Web Service 配置。
 - `/health`：云平台健康检查接口。
-- `/`：真实系统首页。
+- `/`：默认项目展示页。
 - `/showcase`：项目展示页。
+- `/app`：真实系统首页。
 - `/showcase/friend`：朋友版展示页。
 
 ## 上线后给别人的地址
@@ -26,8 +27,9 @@ https://foreign-trade-lead-ai.onrender.com
 
 那么可以这样给：
 
-- 系统演示：`https://foreign-trade-lead-ai.onrender.com/`
-- 项目展示页：`https://foreign-trade-lead-ai.onrender.com/showcase`
+- 项目展示页：`https://foreign-trade-lead-ai.onrender.com/`
+- 系统演示：`https://foreign-trade-lead-ai.onrender.com/app`
+- 项目展示页备用入口：`https://foreign-trade-lead-ai.onrender.com/showcase`
 - 朋友版展示页：`https://foreign-trade-lead-ai.onrender.com/showcase/friend`
 - 接口文档：`https://foreign-trade-lead-ai.onrender.com/docs`
 - 健康检查：`https://foreign-trade-lead-ai.onrender.com/health`
