@@ -573,12 +573,13 @@
       border-radius: var(--radius);
       background: var(--paper);
       box-shadow: var(--shadow);
-      cursor: zoom-in;
+      cursor: pointer;
       transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
     }
 
     .proof-step-card:hover,
-    .proof-step-card:focus-visible {
+    .proof-step-card:focus-visible,
+    .proof-step-card.is-open {
       transform: translateY(-2px);
       border-color: rgba(194, 100, 49, 0.42);
       box-shadow: 0 24px 70px rgba(36, 43, 36, 0.14);
@@ -621,73 +622,28 @@
       white-space: nowrap;
     }
 
-    .proof-lightbox {
-      position: fixed;
-      inset: 0;
-      z-index: 190;
-      display: grid;
-      place-items: center;
-      padding: 22px;
-      background: rgba(12, 20, 17, 0.72);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.18s ease;
-    }
-
-    .proof-lightbox.is-open {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .proof-lightbox-panel {
-      width: min(1160px, 100%);
-      max-height: 88vh;
-      display: grid;
-      grid-template-rows: auto minmax(0, 1fr);
+    .proof-shot {
+      grid-column: 1 / -1;
       overflow: hidden;
-      border: 1px solid rgba(255, 250, 240, 0.42);
-      border-radius: 16px;
-      background: #fffdf8;
-      box-shadow: 0 34px 90px rgba(0, 0, 0, 0.36);
-      transform: scale(0.96);
-      transition: transform 0.18s ease;
+      max-height: 0;
+      border: 0 solid var(--line);
+      border-radius: 10px;
+      background: #eef3f2;
+      opacity: 0;
+      transition: max-height 0.28s ease, opacity 0.2s ease, border-width 0.2s ease, margin-top 0.2s ease;
     }
 
-    .proof-lightbox.is-open .proof-lightbox-panel {
-      transform: scale(1);
+    .proof-step-card.is-open .proof-shot {
+      max-height: 780px;
+      margin-top: 2px;
+      border-width: 1px;
+      opacity: 1;
     }
 
-    .proof-lightbox-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      padding: 14px 16px;
-      border-bottom: 1px solid var(--line);
-    }
-
-    .proof-lightbox-head h3 {
-      margin: 0;
-      color: var(--ink);
-      font-size: 18px;
-    }
-
-    .proof-lightbox-close {
-      width: 40px;
-      height: 40px;
-      border: 1px solid #d8cbb8;
-      border-radius: 8px;
-      background: #fffaf0;
-      color: var(--ink);
-      font-size: 22px;
-      cursor: pointer;
-    }
-
-    .proof-lightbox img {
+    .proof-shot img {
       display: block;
       width: 100%;
-      max-height: calc(88vh - 70px);
-      object-fit: contain;
+      height: auto;
       background: #eef3f2;
     }
 
@@ -1576,48 +1532,48 @@ GET  /api/leads/{id}/logs</pre>
         <article class="proof-step-card" role="button" tabindex="0" data-proof-image="/show_pictures/Step1_邮件录入界面.png" data-proof-title="STEP 01 · 邮件录入界面">
           <b>STEP 01 · 邮件进入</b>
           <div>
-            <h3>销售粘贴询盘或批量导入 txt / eml 邮件。</h3>
-            <p>系统先保留原始邮件上下文，再由销售触发抽取，避免 AI 在没有人工确认的情况下直接写入客户库。</p>
+            <h3>邮件录入页：粘贴客户邮件正文，并支持 txt / eml 批量导入。</h3>
+            <p>截图展示样例邮件按钮、邮件正文输入框、文件选择、抽取客户线索、保存线索和批量导入入口。</p>
           </div>
           <span class="proof-open">查看截图</span>
         </article>
         <article class="proof-step-card" role="button" tabindex="0" data-proof-image="/show_pictures/Step2_抽取结果界面_1.png" data-proof-title="STEP 02 · 字段抽取结果">
           <b>STEP 02 · 字段抽取</b>
           <div>
-            <h3>客户、公司、国家、产品、预算和数量被结构化。</h3>
-            <p>每个字段保留置信度和来源片段，审核人能看到系统为什么这样填，而不是只接收一个黑箱结果。</p>
+            <h3>抽取结果页：展示 Lead Score、客户字段和字段级证据。</h3>
+            <p>截图中可以看到客户姓名、邮箱、公司、国家、电话、产品需求、预算、数量，以及每个字段的置信度。</p>
           </div>
           <span class="proof-open">查看截图</span>
         </article>
         <article class="proof-step-card" role="button" tabindex="0" data-proof-image="/show_pictures/Step2_抽取结果界面_3.png" data-proof-title="STEP 03 · 评分拆解与回复草稿">
           <b>STEP 03 · 销售动作</b>
           <div>
-            <h3>系统给出评分拆解、下一步动作和英文回复草稿。</h3>
-            <p>重点不是让 AI 替销售拍板，而是帮助销售判断优先级、补齐缺口，并更快发出第一封跟进邮件。</p>
+            <h3>抽取结果下半屏：评分拆解、下一步动作、回复草稿和缺字段追问。</h3>
+            <p>截图展示 urgency、commercial_value 等评分项，以及系统建议销售如何跟进和可直接参考的英文回复。</p>
           </div>
           <span class="proof-open">查看截图</span>
         </article>
         <article class="proof-step-card" role="button" tabindex="0" data-proof-image="/show_pictures/Step3_线索列表界面-已确认.png" data-proof-title="STEP 04 · 线索列表与状态">
           <b>STEP 04 · 入库排序</b>
           <div>
-            <h3>线索保存后进入列表，并按评分和状态形成跟进队列。</h3>
-            <p>销售不再只按邮件时间顺序处理，而是优先处理高价值、高紧急度、信息更完整的询盘。</p>
+            <h3>线索列表页：展示已保存线索、评分、审核状态和同步状态。</h3>
+            <p>截图中这条 NorthPeak Supplies 线索已经确认，保留来源 manual、同步 not_synced 和评分 95。</p>
           </div>
           <span class="proof-open">查看截图</span>
         </article>
         <article class="proof-step-card" role="button" tabindex="0" data-proof-image="/show_pictures/Step4_线索详情与人工审核界面_1.png" data-proof-title="STEP 05 · 线索详情与人工审核">
           <b>STEP 05 · 人工审核</b>
           <div>
-            <h3>AI 结果进入 pending_review，由销售确认或修正。</h3>
-            <p>客户信息、预算、产品需求和跟进建议都可以人工修改，确认后才允许同步到飞书或 CRM。</p>
+            <h3>线索详情页：人工检查字段、跟进建议、回复草稿和审核备注。</h3>
+            <p>截图展示客户信息表单、pending_review 状态、英文回复草稿输入区，以及确认前可填写的审核备注。</p>
           </div>
           <span class="proof-open">查看截图</span>
         </article>
         <article class="proof-step-card" role="button" tabindex="0" data-proof-image="/show_pictures/同步到飞书.png" data-proof-title="STEP 06 · 飞书同步与 Timeline">
           <b>STEP 06 · 同步留痕</b>
           <div>
-            <h3>确认后的线索同步飞书 Mock，timeline 保留完整记录。</h3>
-            <p>系统记录 AI 抽取、保存、人审确认和同步结果，方便团队复盘，也便于技术人员排查失败和重试。</p>
+            <h3>审核操作区：确认线索、拒绝线索、同步飞书 Mock，并查看时间线。</h3>
+            <p>截图展示 Lead saved、AI extraction completed、Human review confirmed 和 Synced to Feishu 的完整 timeline。</p>
           </div>
           <span class="proof-open">查看截图</span>
         </article>
