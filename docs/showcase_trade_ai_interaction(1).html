@@ -897,6 +897,115 @@
       box-shadow: 0 16px 42px rgba(29, 37, 34, 0.12);
     }
 
+    .problem-card[data-info-id],
+    .flow-step[data-info-id] {
+      cursor: pointer;
+    }
+
+    .problem-card[data-info-id]:focus-visible,
+    .flow-step[data-info-id]:focus-visible {
+      outline: 3px solid rgba(13, 93, 71, 0.26);
+      outline-offset: 4px;
+    }
+
+    .info-lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 110;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: rgba(16, 24, 21, 0.54);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.22s ease;
+    }
+
+    .info-lightbox.is-open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .info-panel {
+      width: min(780px, calc(100vw - 32px));
+      max-height: min(760px, calc(100vh - 32px));
+      overflow: auto;
+      border: 1px solid rgba(217, 209, 195, 0.92);
+      border-radius: 18px;
+      background: var(--paper);
+      box-shadow: 0 34px 90px rgba(16, 24, 21, 0.26);
+      transform: translateY(12px) scale(0.98);
+      transition: transform 0.22s ease;
+    }
+
+    .info-lightbox.is-open .info-panel {
+      transform: translateY(0) scale(1);
+    }
+
+    .info-head {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      align-items: start;
+      padding: 24px;
+      border-bottom: 1px solid rgba(217, 209, 195, 0.72);
+    }
+
+    .info-kicker {
+      margin: 0 0 8px;
+      color: var(--copper);
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .info-title {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 46px);
+      line-height: 1.08;
+      color: var(--ink);
+    }
+
+    .info-close {
+      width: 42px;
+      height: 42px;
+      border: 1px solid rgba(217, 209, 195, 0.9);
+      border-radius: 999px;
+      background: rgba(255, 253, 248, 0.88);
+      color: var(--ink);
+      font-size: 24px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .info-body {
+      display: grid;
+      gap: 14px;
+      padding: 24px;
+    }
+
+    .info-section {
+      padding: 18px;
+      border: 1px solid rgba(217, 209, 195, 0.82);
+      border-radius: 12px;
+      background: rgba(255, 253, 248, 0.68);
+    }
+
+    .info-section h4 {
+      margin: 0 0 10px;
+      color: var(--green-dark);
+      font-size: 18px;
+      line-height: 1.35;
+    }
+
+    .info-section p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.78;
+    }
+
     .quick-dock {
       position: fixed;
       right: 18px;
@@ -1117,17 +1226,17 @@
         <p>外贸询盘邮件里常常混杂客户信息、采购意图、预算、数量和交期。系统要做的是把这些信息变成销售可审核、可排序、可同步的业务对象。</p>
       </div>
       <div class="problem-grid">
-        <article class="problem-card">
+        <article class="problem-card" tabindex="0" role="button" data-info-id="pain-manual">
           <b>PAIN 01</b>
           <h3>人工录入慢</h3>
           <p>销售需要从邮件中复制客户姓名、公司、产品、数量、预算等字段，重复劳动多，容易漏填。</p>
         </article>
-        <article class="problem-card">
+        <article class="problem-card" tabindex="0" role="button" data-info-id="pain-delay">
           <b>PAIN 02</b>
           <h3>高意向客户容易被延迟</h3>
           <p>urgent、deadline、within 3 days 等信号如果没有被及时识别，可能错过报价和成交窗口。</p>
         </article>
-        <article class="problem-card">
+        <article class="problem-card" tabindex="0" role="button" data-info-id="pain-audit">
           <b>PAIN 03</b>
           <h3>AI 结果需要可审核</h3>
           <p>外贸客户关系敏感，AI 不能直接写入 CRM。系统必须保留人工审核和日志记录。</p>
@@ -1141,12 +1250,12 @@
         <p>这条链路可以通过手动录入、批量导入、n8n webhook 或微信聊天文本触发。确认后的线索才能进入飞书或正式 CRM。</p>
       </div>
       <div class="flow">
-        <div class="flow-step"><b>01</b><strong>询盘进入</strong><span>邮件粘贴、批量导入、n8n 调用 `/api/webhooks/email`，或微信聊天文本导入。</span></div>
-        <div class="flow-step"><b>02</b><strong>字段抽取</strong><span>抽取客户、公司、国家、产品、预算、数量、电话等字段。</span></div>
-        <div class="flow-step"><b>03</b><strong>线索评分</strong><span>根据紧急程度、商业价值、联系完整度等计算 lead_score。</span></div>
-        <div class="flow-step"><b>04</b><strong>跟进建议</strong><span>生成英文回复草稿和缺字段追问，帮助销售快速响应。</span></div>
-        <div class="flow-step"><b>05</b><strong>人工审核</strong><span>进入 pending_review，销售确认、修改或拒绝。</span></div>
-        <div class="flow-step"><b>06</b><strong>同步留痕</strong><span>confirmed 后同步飞书，成功或失败都写入 timeline。</span></div>
+        <div class="flow-step" tabindex="0" role="button" data-info-id="flow-intake"><b>01</b><strong>询盘进入</strong><span>邮件粘贴、批量导入、n8n 调用 `/api/webhooks/email`，或微信聊天文本导入。</span></div>
+        <div class="flow-step" tabindex="0" role="button" data-info-id="flow-extract"><b>02</b><strong>字段抽取</strong><span>抽取客户、公司、国家、产品、预算、数量、电话等字段。</span></div>
+        <div class="flow-step" tabindex="0" role="button" data-info-id="flow-score"><b>03</b><strong>线索评分</strong><span>根据紧急程度、商业价值、联系完整度等计算 lead_score。</span></div>
+        <div class="flow-step" tabindex="0" role="button" data-info-id="flow-followup"><b>04</b><strong>跟进建议</strong><span>生成英文回复草稿和缺字段追问，帮助销售快速响应。</span></div>
+        <div class="flow-step" tabindex="0" role="button" data-info-id="flow-review"><b>05</b><strong>人工审核</strong><span>进入 pending_review，销售确认、修改或拒绝。</span></div>
+        <div class="flow-step" tabindex="0" role="button" data-info-id="flow-sync"><b>06</b><strong>同步留痕</strong><span>confirmed 后同步飞书，成功或失败都写入 timeline。</span></div>
       </div>
     </section>
 
@@ -1200,7 +1309,7 @@ GET  /api/leads/{id}/logs</pre>
         <p>邮件和微信聊天都可以作为询盘入口，后续统一进入抽取、评分、人审和飞书同步流程。点击任一环节可放大查看系统截图。</p>
       </div>
       <div class="proof-accordion" aria-label="可放大的系统截图步骤">
-        <article class="proof-step-card" role="button" tabindex="0" data-proof-image="/show_pictures/Step1_邮件录入界面.png" data-proof-title="STEP 01A · 邮件录入界面">
+        <article class="proof-step-card" role="button" tabindex="0" data-proof-image="../show_pictures/Step1_邮件录入界面.png" data-proof-title="STEP 01A · 邮件录入界面">
           <b>STEP 01A · 邮件进入</b>
           <div>
             <h3>邮件录入页：粘贴客户邮件正文，并支持 txt / eml 批量导入。</h3>
@@ -1208,7 +1317,7 @@ GET  /api/leads/{id}/logs</pre>
           </div>
           <span class="proof-open">查看截图</span>
         </article>
-        <article class="proof-step-card" role="button" tabindex="0" data-proof-image="/show_pictures/微信聊天文本录入.png" data-proof-title="STEP 01B · 微信聊天文本录入">
+        <article class="proof-step-card" role="button" tabindex="0" data-proof-image="../show_pictures/微信聊天文本录入.png" data-proof-title="STEP 01B · 微信聊天文本录入">
           <b>STEP 01B · 微信聊天</b>
           <div>
             <h3>微信聊天录入页：粘贴客户对话文本，作为非邮件询盘入口。</h3>
@@ -1216,7 +1325,7 @@ GET  /api/leads/{id}/logs</pre>
           </div>
           <span class="proof-open">查看截图</span>
         </article>
-        <article class="proof-step-card" role="button" tabindex="0" data-proof-image="/show_pictures/n8n_1.png" data-proof-title="STEP 01C · n8n HTTP Request 执行结果">
+        <article class="proof-step-card" role="button" tabindex="0" data-proof-image="../show_pictures/n8n_1.png" data-proof-title="STEP 01C · n8n HTTP Request 执行结果">
           <b>STEP 01C · n8n 流入</b>
           <div>
             <h3>n8n 执行页：HTTP Request 调用系统 webhook，并返回抽取结果。</h3>
@@ -1224,7 +1333,7 @@ GET  /api/leads/{id}/logs</pre>
           </div>
           <span class="proof-open">查看截图</span>
         </article>
-        <article class="proof-step-card" role="button" tabindex="0" data-proof-image="/show_pictures/n8n_2.png" data-proof-title="STEP 01D · n8n 自动入库结果">
+        <article class="proof-step-card" role="button" tabindex="0" data-proof-image="../show_pictures/n8n_2.png" data-proof-title="STEP 01D · n8n 自动入库结果">
           <b>STEP 01D · 自动入库</b>
           <div>
             <h3>线索列表页：n8n 推送后的询盘已自动保存为待审核线索。</h3>
@@ -1232,7 +1341,7 @@ GET  /api/leads/{id}/logs</pre>
           </div>
           <span class="proof-open">查看截图</span>
         </article>
-        <article class="proof-step-card" role="button" tabindex="0" data-proof-image="/show_pictures/Step2_抽取结果界面_1.png" data-proof-title="STEP 02 · 字段抽取结果">
+        <article class="proof-step-card" role="button" tabindex="0" data-proof-image="../show_pictures/Step2_抽取结果界面_1.png" data-proof-title="STEP 02 · 字段抽取结果">
           <b>STEP 02 · 字段抽取</b>
           <div>
             <h3>抽取结果页：展示 Lead Score、客户字段和字段级证据。</h3>
@@ -1240,7 +1349,7 @@ GET  /api/leads/{id}/logs</pre>
           </div>
           <span class="proof-open">查看截图</span>
         </article>
-        <article class="proof-step-card" role="button" tabindex="0" data-proof-image="/show_pictures/Step2_抽取结果界面_3.png" data-proof-title="STEP 03 · 评分拆解与回复草稿">
+        <article class="proof-step-card" role="button" tabindex="0" data-proof-image="../show_pictures/Step2_抽取结果界面_3.png" data-proof-title="STEP 03 · 评分拆解与回复草稿">
           <b>STEP 03 · 销售动作</b>
           <div>
             <h3>抽取结果下半屏：评分拆解、下一步动作、回复草稿和缺字段追问。</h3>
@@ -1248,7 +1357,7 @@ GET  /api/leads/{id}/logs</pre>
           </div>
           <span class="proof-open">查看截图</span>
         </article>
-        <article class="proof-step-card" role="button" tabindex="0" data-proof-image="/show_pictures/Step3_线索列表界面-已确认.png" data-proof-title="STEP 04 · 线索列表与状态">
+        <article class="proof-step-card" role="button" tabindex="0" data-proof-image="../show_pictures/Step3_线索列表界面-已确认.png" data-proof-title="STEP 04 · 线索列表与状态">
           <b>STEP 04 · 入库排序</b>
           <div>
             <h3>线索列表页：展示已保存线索、评分、审核状态和同步状态。</h3>
@@ -1256,7 +1365,7 @@ GET  /api/leads/{id}/logs</pre>
           </div>
           <span class="proof-open">查看截图</span>
         </article>
-        <article class="proof-step-card" role="button" tabindex="0" data-proof-image="/show_pictures/Step4_线索详情与人工审核界面_1.png" data-proof-title="STEP 05 · 线索详情与人工审核">
+        <article class="proof-step-card" role="button" tabindex="0" data-proof-image="../show_pictures/Step4_线索详情与人工审核界面_1.png" data-proof-title="STEP 05 · 线索详情与人工审核">
           <b>STEP 05 · 人工审核</b>
           <div>
             <h3>线索详情页：人工检查字段、跟进建议、回复草稿和审核备注。</h3>
@@ -1264,7 +1373,7 @@ GET  /api/leads/{id}/logs</pre>
           </div>
           <span class="proof-open">查看截图</span>
         </article>
-        <article class="proof-step-card" role="button" tabindex="0" data-proof-image="/show_pictures/同步到飞书_2.png" data-proof-title="STEP 06 · 飞书多维表格写入结果">
+        <article class="proof-step-card" role="button" tabindex="0" data-proof-image="../show_pictures/同步到飞书_2.png" data-proof-title="STEP 06 · 飞书多维表格写入结果">
           <b>STEP 06 · 同步留痕</b>
           <div>
             <h3>飞书多维表格：确认后的线索已写入销售协作表。</h3>
@@ -1367,7 +1476,7 @@ GET  /api/leads/{id}/logs</pre>
         });
       });
 
-      document.querySelectorAll(".flow-step, .demo-step").forEach((step) => {
+      document.querySelectorAll(".demo-step").forEach((step) => {
         step.tabIndex = 0;
         step.addEventListener("click", () => step.classList.toggle("is-active"));
         step.addEventListener("keydown", (event) => {
@@ -1454,6 +1563,149 @@ GET  /api/leads/{id}/logs</pre>
       const body = document.body;
 
       {
+      if (window.location.protocol === "file:") {
+        document.querySelectorAll('a[href="/app"]').forEach((link) => {
+          link.href = "http://127.0.0.1:8000/app";
+        });
+      }
+
+      const infoData = {
+        "pain-manual": {
+          kicker: "业务痛点",
+          title: "人工录入慢",
+          sections: [
+            ["业务问题", "销售需要从邮件或聊天里反复复制客户姓名、公司、产品、数量、预算等字段。信息分散在正文和签名里，录入慢，也容易漏填。"],
+            ["系统怎么解决", "系统把邮件、微信聊天文本或 n8n 推送内容统一转成结构化线索，并保留字段来源片段，减少重复录入和漏填。"]
+          ]
+        },
+        "pain-delay": {
+          kicker: "业务痛点",
+          title: "高意向客户容易被延迟",
+          sections: [
+            ["业务问题", "urgent、deadline、within 3 days、today quote 等信号如果只靠人工浏览，很容易被淹没在普通询盘里。"],
+            ["系统怎么解决", "系统通过 urgency、commercial_value、contactability 等维度计算 lead_score，把高意向线索放到更靠前的位置。"]
+          ]
+        },
+        "pain-audit": {
+          kicker: "业务痛点",
+          title: "AI 结果需要可审核",
+          sections: [
+            ["业务问题", "客户信息和商机判断不能直接交给 AI 写入下游系统，否则错误字段会影响跟进和团队协作。"],
+            ["系统怎么解决", "AI 抽取结果先进入 pending_review，销售可以修改、确认或拒绝；确认后才允许同步飞书，并把过程写入 timeline。"]
+          ]
+        },
+        "flow-intake": {
+          kicker: "流程环节",
+          title: "01 询盘进入",
+          sections: [
+            ["这一环节做什么", "接收邮件正文、txt/eml 批量文件、n8n webhook JSON 或微信聊天文本，把不同来源的询盘放进同一条处理链路。"],
+            ["对应的接口 / 页面", "页面：系统 Step 1 多渠道录入；接口：POST /api/webhooks/email、POST /api/leads/extract-wechat、POST /api/leads/import-batch。"],
+            ["对应的业务价值", "入口统一后，销售不用关心询盘来自哪里，后续抽取、评分、人审和同步都按同一套标准处理。"]
+          ]
+        },
+        "flow-extract": {
+          kicker: "流程环节",
+          title: "02 字段抽取",
+          sections: [
+            ["这一环节做什么", "从原始文本中识别客户、邮箱、公司、国家、电话、产品需求、预算、数量、紧急程度等字段。"],
+            ["对应的接口 / 页面", "页面：Step 2 抽取结果；接口：POST /api/leads/extract、POST /api/leads/extract-wechat。"],
+            ["对应的业务价值", "把自然语言询盘变成可保存、可筛选、可审核的结构化销售线索。"]
+          ]
+        },
+        "flow-score": {
+          kicker: "流程环节",
+          title: "03 线索评分",
+          sections: [
+            ["这一环节做什么", "根据紧急程度、商业价值、联系完整度、产品清晰度、市场匹配和风险扣分计算 lead_score。"],
+            ["对应的接口 / 页面", "页面：Step 2 的 Lead Score 和评分拆解；模块：backend/scoring.py。"],
+            ["对应的业务价值", "帮助销售先处理更急、更完整、更可能成交的询盘，减少高价值线索被延迟。"]
+          ]
+        },
+        "flow-followup": {
+          kicker: "流程环节",
+          title: "04 跟进建议",
+          sections: [
+            ["这一环节做什么", "根据抽取字段生成下一步动作、英文回复草稿和缺字段追问。"],
+            ["对应的接口 / 页面", "页面：Step 2 的下一步动作、英文回复草稿、缺字段追问；模块：backend/followup.py。"],
+            ["对应的业务价值", "让销售更快发出第一封回复，同时提醒需要补齐预算、数量、交期、目的港等关键信息。"]
+          ]
+        },
+        "flow-review": {
+          kicker: "流程环节",
+          title: "05 人工审核",
+          sections: [
+            ["这一环节做什么", "销售在线索详情里检查字段、修改内容、填写审核备注，并选择确认或拒绝。"],
+            ["对应的接口 / 页面", "页面：Step 4 线索详情与人工审核；接口：PATCH /api/leads/{id}/review。"],
+            ["对应的业务价值", "保留 human-in-the-loop，避免 AI 直接越权写入飞书或 CRM。"]
+          ]
+        },
+        "flow-sync": {
+          kicker: "流程环节",
+          title: "06 同步留痕",
+          sections: [
+            ["这一环节做什么", "confirmed 线索同步到飞书多维表格，成功或失败都写入 timeline。"],
+            ["对应的接口 / 页面", "页面：Step 4 同步到飞书按钮和时间线；接口：POST /api/leads/{id}/sync/feishu、GET /api/leads/{id}/logs。"],
+            ["对应的业务价值", "团队能看到同步结果和历史记录，便于协作、复盘和失败重试。"]
+          ]
+        }
+      };
+
+      const infoLightbox = document.createElement("div");
+      infoLightbox.className = "info-lightbox";
+      infoLightbox.innerHTML = `
+        <article class="info-panel" role="dialog" aria-modal="true" aria-labelledby="info-title">
+          <div class="info-head">
+            <div>
+              <p class="info-kicker"></p>
+              <h3 class="info-title" id="info-title"></h3>
+            </div>
+            <button class="info-close" type="button" aria-label="关闭说明">×</button>
+          </div>
+          <div class="info-body"></div>
+        </article>`;
+      body.appendChild(infoLightbox);
+
+      const infoKicker = infoLightbox.querySelector(".info-kicker");
+      const infoTitle = infoLightbox.querySelector(".info-title");
+      const infoBody = infoLightbox.querySelector(".info-body");
+
+      function openInfo(card) {
+        const data = infoData[card.dataset.infoId];
+        if (!data || !infoKicker || !infoTitle || !infoBody) return;
+        infoKicker.textContent = data.kicker;
+        infoTitle.textContent = data.title;
+        infoBody.replaceChildren(...data.sections.map(([heading, text]) => {
+          const section = document.createElement("section");
+          section.className = "info-section";
+          const title = document.createElement("h4");
+          title.textContent = heading;
+          const paragraph = document.createElement("p");
+          paragraph.textContent = text;
+          section.append(title, paragraph);
+          return section;
+        }));
+        infoLightbox.classList.add("is-open");
+      }
+
+      function closeInfo() {
+        infoLightbox.classList.remove("is-open");
+      }
+
+      infoLightbox.querySelector(".info-close")?.addEventListener("click", closeInfo);
+      infoLightbox.addEventListener("click", (event) => {
+        if (event.target === infoLightbox) closeInfo();
+      });
+
+      document.querySelectorAll(".problem-card[data-info-id], .flow-step[data-info-id]").forEach((card) => {
+        card.addEventListener("click", () => openInfo(card));
+        card.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            openInfo(card);
+          }
+        });
+      });
+
       const proofLightbox = document.createElement("div");
       proofLightbox.className = "proof-lightbox";
       proofLightbox.innerHTML = `
@@ -1499,6 +1751,7 @@ GET  /api/leads/{id}/logs</pre>
       });
 
       document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") closeInfo();
         if (event.key === "Escape") closeProofImage();
       });
       }
