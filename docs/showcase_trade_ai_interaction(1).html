@@ -1599,7 +1599,6 @@ GET  /api/leads/{id}/logs</pre>
           title: "01 询盘进入",
           sections: [
             ["这一环节做什么", "接收邮件正文、txt/eml 批量文件、n8n webhook JSON 或微信聊天文本，把不同来源的询盘放进同一条处理链路。"],
-            ["对应的接口 / 页面", "页面：系统 Step 1 多渠道录入；接口：POST /api/webhooks/email、POST /api/leads/extract-wechat、POST /api/leads/import-batch。"],
             ["对应的业务价值", "入口统一后，销售不用关心询盘来自哪里，后续抽取、评分、人审和同步都按同一套标准处理。"]
           ]
         },
@@ -1608,7 +1607,6 @@ GET  /api/leads/{id}/logs</pre>
           title: "02 字段抽取",
           sections: [
             ["这一环节做什么", "从原始文本中识别客户、邮箱、公司、国家、电话、产品需求、预算、数量、紧急程度等字段。"],
-            ["对应的接口 / 页面", "页面：Step 2 抽取结果；接口：POST /api/leads/extract、POST /api/leads/extract-wechat。"],
             ["对应的业务价值", "把自然语言询盘变成可保存、可筛选、可审核的结构化销售线索。"]
           ]
         },
@@ -1617,7 +1615,6 @@ GET  /api/leads/{id}/logs</pre>
           title: "03 线索评分",
           sections: [
             ["这一环节做什么", "根据紧急程度、商业价值、联系完整度、产品清晰度、市场匹配和风险扣分计算 lead_score。"],
-            ["对应的接口 / 页面", "页面：Step 2 的 Lead Score 和评分拆解；模块：backend/scoring.py。"],
             ["对应的业务价值", "帮助销售先处理更急、更完整、更可能成交的询盘，减少高价值线索被延迟。"]
           ]
         },
@@ -1626,7 +1623,6 @@ GET  /api/leads/{id}/logs</pre>
           title: "04 跟进建议",
           sections: [
             ["这一环节做什么", "根据抽取字段生成下一步动作、英文回复草稿和缺字段追问。"],
-            ["对应的接口 / 页面", "页面：Step 2 的下一步动作、英文回复草稿、缺字段追问；模块：backend/followup.py。"],
             ["对应的业务价值", "让销售更快发出第一封回复，同时提醒需要补齐预算、数量、交期、目的港等关键信息。"]
           ]
         },
@@ -1635,7 +1631,6 @@ GET  /api/leads/{id}/logs</pre>
           title: "05 人工审核",
           sections: [
             ["这一环节做什么", "销售在线索详情里检查字段、修改内容、填写审核备注，并选择确认或拒绝。"],
-            ["对应的接口 / 页面", "页面：Step 4 线索详情与人工审核；接口：PATCH /api/leads/{id}/review。"],
             ["对应的业务价值", "保留 human-in-the-loop，避免 AI 直接越权写入飞书或 CRM。"]
           ]
         },
@@ -1644,7 +1639,6 @@ GET  /api/leads/{id}/logs</pre>
           title: "06 同步留痕",
           sections: [
             ["这一环节做什么", "confirmed 线索同步到飞书多维表格，成功或失败都写入 timeline。"],
-            ["对应的接口 / 页面", "页面：Step 4 同步到飞书按钮和时间线；接口：POST /api/leads/{id}/sync/feishu、GET /api/leads/{id}/logs。"],
             ["对应的业务价值", "团队能看到同步结果和历史记录，便于协作、复盘和失败重试。"]
           ]
         }
