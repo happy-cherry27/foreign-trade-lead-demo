@@ -1162,7 +1162,6 @@
     <nav class="nav-links" aria-label="页面导航">
       <a href="#problem">业务痛点</a>
       <a href="#workflow">系统流程</a>
-      <a href="#capability">核心能力</a>
       <a href="#architecture">技术架构</a>
       <a href="#proof">实机截图</a>
       <a href="#demo">演示路径</a>
@@ -1256,23 +1255,6 @@
         <div class="flow-step" tabindex="0" role="button" data-info-id="flow-followup"><b>04</b><strong>跟进建议</strong><span>生成英文回复草稿和缺字段追问，帮助销售快速响应。</span></div>
         <div class="flow-step" tabindex="0" role="button" data-info-id="flow-review"><b>05</b><strong>人工审核</strong><span>进入 pending_review，销售确认、修改或拒绝。</span></div>
         <div class="flow-step" tabindex="0" role="button" data-info-id="flow-sync"><b>06</b><strong>同步留痕</strong><span>confirmed 后同步飞书，成功或失败都写入 timeline。</span></div>
-      </div>
-    </section>
-
-    <section id="capability">
-      <div class="section-head">
-        <h2>核心能力已经落到系统里。</h2>
-        <p>展示页面强调的是已经实现的能力，不是未来规划。每一项都能在系统界面或接口中对应到。</p>
-      </div>
-      <div class="capabilities">
-        <article class="capability-card"><b>01</b><h3>多渠道入口</h3><p>支持邮件录入、n8n webhook 和微信聊天文本导入，统一进入线索抽取流程。</p></article>
-        <article class="capability-card"><b>02</b><h3>字段级证据</h3><p>每个字段带 value、confidence 和 source_snippet，便于人工审核。</p></article>
-        <article class="capability-card"><b>03</b><h3>Lead Score</h3><p>透明规则评分，用于判断销售应该优先跟进哪条线索。</p></article>
-        <article class="capability-card"><b>04</b><h3>回复草稿与追问</h3><p>自动生成英文回复草稿，并针对缺失字段生成追问问题。</p></article>
-        <article class="capability-card"><b>05</b><h3>人工审核闸门</h3><p>AI 结果先进入 pending_review，只有 confirmed 后才能同步飞书。</p></article>
-        <article class="capability-card"><b>06</b><h3>飞书真实同步</h3><p>配置飞书应用凭证后，确认线索可写入飞书多维表格。</p></article>
-        <article class="capability-card"><b>07</b><h3>失败可追踪</h3><p>真实同步失败会写入 failed 状态和 sync_failed timeline，可修正后重试。</p></article>
-        <article class="capability-card"><b>08</b><h3>安全展示</h3><p>前端按文本展示外部邮件内容，避免把客户邮件当 HTML 执行。</p></article>
       </div>
     </section>
 
@@ -1607,14 +1589,14 @@ GET  /api/leads/{id}/logs</pre>
           title: "02 字段抽取",
           sections: [
             ["这一环节做什么", "从原始文本中识别客户、邮箱、公司、国家、电话、产品需求、预算、数量、紧急程度等字段。"],
-            ["对应的业务价值", "把自然语言询盘变成可保存、可筛选、可审核的结构化销售线索。"]
+            ["对应的业务价值", "把自然语言询盘变成可保存、可筛选、可审核的结构化销售线索。而且每个字段带 value、confidence 和 source_snippet，便于人工审核。"]
           ]
         },
         "flow-score": {
           kicker: "流程环节",
           title: "03 线索评分",
           sections: [
-            ["这一环节做什么", "根据紧急程度、商业价值、联系完整度、产品清晰度、市场匹配和风险扣分计算 lead_score。"],
+            ["这一环节做什么", "根据紧急程度、商业价值、联系完整度、产品清晰度、市场匹配和风险扣分的透明评分指标计算 lead_score。"],
             ["对应的业务价值", "帮助销售先处理更急、更完整、更可能成交的询盘，减少高价值线索被延迟。"]
           ]
         },
@@ -1630,7 +1612,7 @@ GET  /api/leads/{id}/logs</pre>
           kicker: "流程环节",
           title: "05 人工审核",
           sections: [
-            ["这一环节做什么", "销售在线索详情里检查字段、修改内容、填写审核备注，并选择确认或拒绝。"],
+            ["这一环节做什么", "AI 结果先进入 pending_review，销售在线索详情里检查字段、修改内容、填写审核备注，只有 confirmed 后才能同步飞书。"],
             ["对应的业务价值", "保留 human-in-the-loop，避免 AI 直接越权写入飞书或 CRM。"]
           ]
         },
