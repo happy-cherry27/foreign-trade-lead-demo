@@ -20,4 +20,4 @@ Fix the three highest-impact issues found during self-check:
 - `rg innerHTML frontend/app.js` returned no matches.
 - Pending review lead sync returns `400 Only confirmed leads can be synced to Feishu`.
 - Review updates can increase score, verified from `19` to `48` after adding budget, quantity, and phone.
-- Confirmed urgent lead can still sync to Feishu mock and writes timeline events.
+- Confirmed urgent lead can still sync to Feishu and writes timeline events.

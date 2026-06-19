@@ -187,7 +187,7 @@ def extract_lead(raw_email: str) -> dict[str, Any]:
             f"Detected country: {country}" if country != "unknown" else "Country is missing or implicit.",
             f"Detected product need: {product_need}" if product_need != "unknown" else "Product need is unclear.",
         ],
-        "model_name": "rule-based-mock-extractor-v0.1",
+        "model_name": "rule-based-extractor-v0.1",
     }
     lead_score, score_breakdown = build_score(extracted, text)
     extracted["lead_score"] = lead_score

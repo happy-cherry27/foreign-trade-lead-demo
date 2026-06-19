@@ -2,7 +2,7 @@
 
 ## Goal
 
-Turn raw foreign-trade customer emails into structured leads, keep AI/mock extraction evidence, save logs, and support human review.
+Turn raw foreign-trade customer emails into structured leads, keep AI extraction evidence, save logs, and support human review.
 
 ## Changes completed on 2026-06-17
 

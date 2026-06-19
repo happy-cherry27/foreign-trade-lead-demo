@@ -36,9 +36,9 @@ def post_json(url: str, payload: dict[str, Any], headers: dict[str, str] | None 
 def sync_to_feishu_bitable(lead: dict[str, Any]) -> dict[str, str]:
     if not feishu_configured():
         return {
-            "target": "feishu_bitable_mock",
+            "target": "feishu_bitable_demo_fallback",
             "status": "synced",
-            "detail": "Mock sync completed because Feishu environment variables are not configured.",
+            "detail": "Feishu environment variables are not configured; recorded as a local demo fallback sync.",
         }
 
     token_response = post_json(

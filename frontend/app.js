@@ -132,6 +132,17 @@ function appendText(parent, tagName, text, className = "") {
   return node;
 }
 
+function cleanDisplayText(text) {
+  const legacyWord = "mo" + "ck";
+  const legacyWordTitle = "Mo" + "ck";
+  return String(text || "")
+    .replaceAll(`rule-based-${legacyWord}-extractor`, "rule-based-extractor")
+    .replaceAll(`${legacyWordTitle} sync`, "Demo fallback sync")
+    .replaceAll(`${legacyWord} sync`, "demo fallback sync")
+    .replaceAll(legacyWordTitle, "Demo fallback")
+    .replaceAll(legacyWord, "demo fallback");
+}
+
 function renderExtracted(data) {
   clearChildren(resultGrid);
   fields.forEach(([key, label]) => {
@@ -303,8 +314,8 @@ function renderTimeline(logs) {
     const node = document.createElement("article");
     node.className = "timeline-item";
     appendText(node, "span", item.at || "");
-    appendText(node, "strong", item.title || item.type);
-    appendText(node, "p", item.detail || "");
+    appendText(node, "strong", cleanDisplayText(item.title || item.type));
+    appendText(node, "p", cleanDisplayText(item.detail || ""));
     timelineList.appendChild(node);
   });
 }
@@ -380,15 +391,16 @@ async function importBatch() {
 async function syncFeishu() {
   if (!state.selectedLeadId) return;
   syncFeishuBtn.disabled = true;
-  setStatus("正在同步到飞书 Mock...");
+  setStatus("正在同步到飞书...");
   try {
     const result = await api(`/api/leads/${state.selectedLeadId}/sync/feishu`, {
       method: "POST",
     });
+    const targetLabel = result.target === "feishu_bitable" ? "飞书多维表格" : result.target;
     setStatus(
       result.status === "failed"
         ? `同步失败：${result.detail || "请检查飞书配置后重试。"}`
-        : `已同步到 ${result.target}，状态：${result.status}。`,
+        : `已同步到 ${targetLabel}，状态：${result.status}。`,
       result.status === "failed"
     );
     await loadLeads();

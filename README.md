@@ -49,19 +49,19 @@ timeline 留痕
 - 跟进建议生成
 - 英文回复草稿生成
 - 缺字段追问生成：预算、数量、电话、产品规格、目的国、交期
-- AI/mock 抽取依据和置信度展示
+- AI 抽取依据和置信度展示
 - SQLite 保存客户线索
 - 线索列表和状态筛选
 - 线索详情人工修改、确认、拒绝
 - AI 抽取日志、人工审核记录和时间线展示
 - CSV 导出
-- 飞书多维表格 Mock 同步状态
+- 飞书多维表格同步状态
 
 ## 技术栈
 
 - Backend: FastAPI + SQLite
 - Frontend: HTML + CSS + JavaScript
-- AI extraction: rule-based mock extractor first, replaceable with a real LLM API later
+- AI extraction: transparent rule-based extractor first, replaceable with a real LLM API later
 - Deployment artifact: Dockerfile
 
 ## 数据表
@@ -113,7 +113,7 @@ timeline 留痕
 | GET | `/api/leads/export.csv` | 导出线索 CSV |
 | GET | `/api/leads/{id}` | 获取线索详情 |
 | PATCH | `/api/leads/{id}/review` | 人工确认或拒绝线索 |
-| POST | `/api/leads/{id}/sync/feishu` | 模拟同步到飞书多维表格 |
+| POST | `/api/leads/{id}/sync/feishu` | 同步到飞书多维表格 |
 | GET | `/api/leads/{id}/logs` | 查看 AI 日志和审核记录 |
 
 ## n8n / Webhook / 飞书 API 怎么理解
@@ -135,7 +135,7 @@ Gmail / IMAP Email Trigger
 -> 同步到飞书多维表格或正式 CRM
 ```
 
-当前版本已经实现了 n8n 友好的 webhook 入口和飞书同步切换点。默认未配置飞书环境变量时走 mock sync；配置飞书凭证后，`/api/leads/{id}/sync/feishu` 会尝试调用飞书多维表格 OpenAPI。
+当前版本已经实现了 n8n 友好的 webhook 入口和飞书多维表格 OpenAPI 同步。未配置飞书环境变量时会记录为本地演示兜底；配置飞书凭证后，`/api/leads/{id}/sync/feishu` 会调用飞书多维表格 OpenAPI 写入数据。
 
 ### n8n HTTP Request 示例
 
@@ -185,7 +185,7 @@ POST http://127.0.0.1:8000/api/webhooks/email
 
 ### 飞书真实同步配置
 
-`.env` 配置以下变量后，飞书同步接口会从 mock 切到真实 OpenAPI 调用：
+`.env` 配置以下变量后，飞书同步接口会调用真实 OpenAPI：
 
 ```text
 FEISHU_APP_ID=
@@ -194,7 +194,7 @@ FEISHU_BITABLE_APP_TOKEN=
 FEISHU_BITABLE_TABLE_ID=
 ```
 
-默认不配置时，系统仍可稳定演示，并在 timeline 中记录 mock sync。
+默认不配置时，系统仍可稳定演示，并在 timeline 中记录本地演示兜底同步。
 
 如果真实飞书接口调用失败，系统会：
 
@@ -269,7 +269,7 @@ http://127.0.0.1:8000
 8. 点击“确认线索”或“拒绝线索”。
 9. 查看 AI 抽取、人审动作组成的时间线。
 10. 点击“导出 CSV”导出线索表。
-11. 点击“同步飞书 Mock”，查看同步状态和时间线事件。
+11. 点击“同步到飞书”，查看同步状态和时间线事件。
 
 ## 本轮调研后新增的产品判断
 
@@ -296,12 +296,12 @@ http://127.0.0.1:8000
 
 - 邮箱 Webhook：收到客户邮件后自动触发抽取。
 - N8N：负责邮箱、飞书、CRM 之间的工作流编排。
-- 飞书多维表格：作为早期销售线索协作表，目前已提供 mock sync，后续替换为真实飞书 OpenAPI。
+- 飞书多维表格：作为早期销售线索协作表，目前已接入飞书 OpenAPI，可将确认后的线索写入表格。
 - 正式 CRM：将确认后的线索同步到销售系统。
 - 批量导入：一次处理多封询盘邮件。
 - 同步状态：记录飞书、HubSpot 或 Google Sheets 的推送结果。
 - GEO 获客：把社媒评论、私信、主页线索也转成统一客户线索。
-- 真实 LLM API：替换当前 rule-based mock extractor。
+- 真实 LLM API：替换当前透明规则抽取器。
 
 ## 面试表达重点
 

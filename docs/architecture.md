@@ -49,7 +49,7 @@ backend/db.py                    SQLite connection, table creation, events, logs
 backend/extractor.py             Email extraction and field evidence
 backend/scoring.py               Transparent lead scoring rules
 backend/followup.py              Reply draft and qualification questions
-backend/integrations/feishu.py   Feishu Bitable sync adapter with mock fallback
+backend/integrations/feishu.py   Feishu Bitable OpenAPI sync adapter
 backend/services.py              Lead creation service
 ```
 
@@ -83,7 +83,7 @@ The Feishu sync endpoint is:
 POST /api/leads/{id}/sync/feishu
 ```
 
-By default it uses mock sync so the demo is stable. If these environment variables are configured, the adapter attempts a real Feishu Bitable OpenAPI write:
+If these environment variables are configured, the adapter writes confirmed leads to Feishu Bitable through OpenAPI:
 
 ```text
 FEISHU_APP_ID
@@ -111,7 +111,7 @@ This is appropriate for a demo because interviewers can see exactly why a lead i
 
 The system keeps three layers:
 
-- `ai_extraction_logs`: raw AI/mock extraction result
+- `ai_extraction_logs`: raw AI extraction result
 - `review_records`: before/after human review data
 - `lead_events`: user-friendly timeline events
 

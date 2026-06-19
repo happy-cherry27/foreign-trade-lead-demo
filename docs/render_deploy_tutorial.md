@@ -97,7 +97,7 @@ Instance Type: Free
 CORS_ALLOW_ORIGINS=*
 ```
 
-飞书 API 那些变量先不填，因为演示版用 mock 更稳定。
+飞书 API 那些变量可以先不填，未配置时系统会使用本地演示兜底；如果要展示真实同步，再在 Render 环境变量里补齐飞书配置。
 
 然后点：
 

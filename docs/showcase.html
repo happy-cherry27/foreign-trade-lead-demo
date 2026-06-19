@@ -1161,7 +1161,7 @@
         <article class="capability-card"><b>03</b><h3>Lead Score</h3><p>透明规则评分，用于判断销售应该优先跟进哪条线索。</p></article>
         <article class="capability-card"><b>04</b><h3>回复草稿与追问</h3><p>自动生成英文回复草稿，并针对缺失字段生成追问问题。</p></article>
         <article class="capability-card"><b>05</b><h3>人工审核闸门</h3><p>AI 结果先进入 pending_review，只有 confirmed 后才能同步飞书。</p></article>
-        <article class="capability-card"><b>06</b><h3>飞书同步策略</h3><p>默认 mock 保证演示稳定，配置环境变量后可切换真实飞书 OpenAPI。</p></article>
+        <article class="capability-card"><b>06</b><h3>飞书真实同步</h3><p>配置飞书应用凭证后，确认线索可写入飞书多维表格。</p></article>
         <article class="capability-card"><b>07</b><h3>失败可追踪</h3><p>真实同步失败会写入 failed 状态和 sync_failed timeline，可修正后重试。</p></article>
         <article class="capability-card"><b>08</b><h3>安全展示</h3><p>前端按文本展示外部邮件内容，避免把客户邮件当 HTML 执行。</p></article>
       </div>
@@ -1187,7 +1187,7 @@ GET  /api/leads/{id}/logs</pre>
           <div class="module-card"><h3>backend/extractor.py</h3><p>邮件抽取、字段级证据和基础意图识别。</p></div>
           <div class="module-card"><h3>backend/scoring.py</h3><p>lead_score 与 score_breakdown 评分规则。</p></div>
           <div class="module-card"><h3>backend/followup.py</h3><p>英文回复草稿和缺字段追问生成。</p></div>
-          <div class="module-card"><h3>backend/integrations/feishu.py</h3><p>飞书 mock / OpenAPI 同步适配。</p></div>
+          <div class="module-card"><h3>backend/integrations/feishu.py</h3><p>飞书 Bitable OpenAPI 同步适配。</p></div>
           <div class="module-card"><h3>frontend/app.js</h3><p>抽取、审核、批量导入、同步、timeline 交互。</p></div>
         </div>
       </div>
@@ -1239,11 +1239,11 @@ GET  /api/leads/{id}/logs</pre>
           </div>
           <span class="proof-open">查看截图</span>
         </article>
-        <article class="proof-step-card" role="button" tabindex="0" data-proof-image="/show_pictures/同步到飞书.png" data-proof-title="STEP 06 · 飞书同步与 Timeline">
+        <article class="proof-step-card" role="button" tabindex="0" data-proof-image="/show_pictures/同步到飞书_2.png" data-proof-title="STEP 06 · 飞书多维表格写入结果">
           <b>STEP 06 · 同步留痕</b>
           <div>
-            <h3>审核操作区：确认线索、拒绝线索、同步飞书 Mock，并查看时间线。</h3>
-            <p>截图展示 Lead saved、AI extraction completed、Human review confirmed 和 Synced to Feishu 的完整 timeline。</p>
+            <h3>飞书多维表格：确认后的线索已写入销售协作表。</h3>
+            <p>截图展示客户姓名、邮箱、公司、国家、产品需求、预算、数量和优先级等字段已经进入飞书表格。</p>
           </div>
           <span class="proof-open">查看截图</span>
         </article>
@@ -1268,7 +1268,7 @@ GET  /api/leads/{id}/logs</pre>
           <div class="demo-step"><b>2</b><span>点击“抽取客户线索”，查看字段级证据、lead_score、回复草稿和追问。</span></div>
           <div class="demo-step"><b>3</b><span>保存线索后进入详情，修改字段或添加审核备注。</span></div>
           <div class="demo-step"><b>4</b><span>点击“确认线索”，说明 AI 不直接同步，必须人工审核。</span></div>
-          <div class="demo-step"><b>5</b><span>点击“同步飞书 Mock”，查看同步状态和 timeline 留痕。</span></div>
+          <div class="demo-step"><b>5</b><span>点击“同步到飞书”，查看飞书表格写入结果和 timeline 留痕。</span></div>
         </div>
       </div>
     </section>

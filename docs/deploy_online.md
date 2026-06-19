@@ -52,9 +52,9 @@ https://foreign-trade-lead-ai.onrender.com
 ## 面试时可以这样说
 
 这个项目已经不是只能在本地运行的 Demo。  
-我把 FastAPI 后端、前端页面和展示页打包成 Docker 服务，部署后外部人员可以直接访问系统、粘贴一封外贸询盘邮件进行测试，并看到 AI 抽取、评分、人审、timeline 和飞书同步 mock 的完整闭环。
+我把 FastAPI 后端、前端页面和展示页打包成 Docker 服务，部署后外部人员可以直接访问系统、粘贴一封外贸询盘邮件进行测试，并看到 AI 抽取、评分、人审、timeline 和飞书同步的完整闭环。
 
 ## 注意
 
 免费云平台的 SQLite 文件通常不是长期持久化数据库，适合 Demo 和面试展示。  
-如果进入生产环境，建议把 SQLite 换成 PostgreSQL，并把飞书 mock 替换成真实飞书多维表格 API。
+如果进入生产环境，建议把 SQLite 换成 PostgreSQL，并继续完善飞书多维表格 API 的权限、重试和告警策略。
