@@ -1,6 +1,6 @@
 # 外贸客户邮件线索自动录入与跟进建议系统
 
-一个面向外贸销售场景的 AI 工程闭环 Demo：把客户邮件自动抽取成结构化销售线索，进入待审核状态，并保留 AI 判断依据、审核记录和后续跟进建议。
+一个面向外贸销售场景的 AI 工程闭环 Demo：支持邮件、n8n webhook 和微信聊天文本等多渠道询盘入口，把客户需求自动抽取成结构化销售线索，进入待审核状态，并保留 AI 判断依据、审核记录和后续跟进建议。
 
 ## 项目背景
 
@@ -11,15 +11,15 @@
 ## 核心闭环
 
 ```text
-客户邮件输入 -> AI/规则抽取 -> SQLite 入库 -> 页面展示 -> 人工审核 -> 日志记录 -> CSV 导出
+客户询盘输入 -> AI/规则抽取 -> SQLite 入库 -> 页面展示 -> 人工审核 -> 日志记录 -> CSV 导出
 ```
 
 ## 真实业务架构
 
 ```text
-Gmail / IMAP / 外贸询盘邮箱
+Gmail / IMAP / 外贸询盘邮箱 / 微信聊天文本
         ↓
- n8n Email Trigger
+ n8n Email Trigger / Webhook Trigger
         ↓
  n8n HTTP Request
         ↓
@@ -38,8 +38,9 @@ timeline 留痕
 
 - 邮件正文录入
 - n8n/Webhook 邮件入口：`POST /api/webhooks/email`
+- 微信聊天文本入口：`POST /api/leads/extract-wechat`
 - 批量导入 `.txt` / `.eml` 邮件
-- 三类内置样例邮件：完整、缺字段、紧急
+- 四类内置样例：完整邮件、缺字段邮件、紧急邮件、微信聊天
 - 客户线索字段抽取
 - 字段缺失时返回 `unknown`
 - 优先级识别：high / medium / low
@@ -106,6 +107,7 @@ timeline 留痕
 | --- | --- | --- |
 | GET | `/health` | 健康检查 |
 | POST | `/api/leads/extract` | 从邮件正文抽取结构化线索 |
+| POST | `/api/leads/extract-wechat` | 从微信聊天文本抽取结构化线索 |
 | POST | `/api/leads` | 保存线索 |
 | POST | `/api/webhooks/email` | 给 n8n / 邮箱触发器使用的邮件入口 |
 | POST | `/api/leads/import-batch` | 批量导入多封邮件 |
@@ -135,7 +137,21 @@ Gmail / IMAP Email Trigger
 -> 同步到飞书多维表格或正式 CRM
 ```
 
-当前版本已经实现了 n8n 友好的 webhook 入口和飞书多维表格 OpenAPI 同步。未配置飞书环境变量时会记录为本地演示兜底；配置飞书凭证后，`/api/leads/{id}/sync/feishu` 会调用飞书多维表格 OpenAPI 写入数据。
+当前版本已经实现了 n8n 友好的 webhook 入口、微信聊天文本入口和飞书多维表格 OpenAPI 同步。未配置飞书环境变量时会记录为本地演示兜底；配置飞书凭证后，`/api/leads/{id}/sync/feishu` 会调用飞书多维表格 OpenAPI 写入数据。
+
+### n8n workflow 文件
+
+仓库里提供了可导入 n8n 的工作流样例：
+
+```text
+docs/n8n_email_to_leads_workflow.json
+```
+
+说明文档：
+
+```text
+docs/n8n_webhook_setup.md
+```
 
 ### n8n HTTP Request 示例
 
@@ -161,6 +177,42 @@ POST http://127.0.0.1:8000/api/webhooks/email
 
 ```text
 接收邮件 -> 抽取字段 -> 计算 lead_score -> 生成回复草稿 -> 保存为待审核 -> 写入 timeline
+```
+
+## 微信聊天文本导入
+
+前端可以切换到“微信聊天”模式，粘贴客户聊天内容后复用同一套抽取、评分、人审和飞书同步流程。
+
+示例：
+
+```text
+客户：你好，我们想采购 500 个太阳能庭院灯，发到德国。
+销售：好的，请问预算和交期大概是什么？
+客户：预算大概 18000 美金，最好这周确认供应商。
+客户：能不能今天先给我报价和交期？
+客户：我是 Anna Keller，来自 Bright Home GmbH。
+```
+
+接口：
+
+```text
+POST /api/leads/extract-wechat
+```
+
+请求 JSON：
+
+```json
+{
+  "chat_text": "客户：你好，我们想采购 500 个太阳能庭院灯，发到德国...",
+  "source": "manual",
+  "channel": "wechat"
+}
+```
+
+面试表达：
+
+```text
+系统不是只处理邮件，也支持微信聊天文本这类非邮件询盘。销售可以把聊天内容粘贴进系统，系统统一抽取客户需求、数量、预算、紧急程度和跟进建议，再进入人工审核和飞书同步。
 ```
 
 ### n8n 字段映射建议

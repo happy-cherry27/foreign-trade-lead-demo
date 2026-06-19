@@ -34,11 +34,18 @@ Thanks,
 Daniel Smith
 daniel.smith@northpeak.ca
 +1 416 555 9088`,
+  wechat: `客户：你好，我们想采购 500 个太阳能庭院灯，发到德国。
+销售：好的，请问预算和交期大概是什么？
+客户：预算大概 18000 美金，最好这周确认供应商。
+客户：能不能今天先给我报价和交期？
+客户：我是 Anna Keller，来自 Bright Home GmbH。`,
 };
 
 const state = {
   extracted: null,
   rawEmail: "",
+  sourceChannel: "manual",
+  inputMode: "email",
   selectedLeadId: null,
 };
 
@@ -66,6 +73,10 @@ const extractBtn = document.querySelector("#extractBtn");
 const saveBtn = document.querySelector("#saveBtn");
 const batchImportBtn = document.querySelector("#batchImportBtn");
 const sampleButtons = document.querySelectorAll(".sample-btn");
+const sourceButtons = document.querySelectorAll(".source-btn");
+const inputTitle = document.querySelector("#inputTitle");
+const inputBodyLabel = document.querySelector("#inputBodyLabel");
+const batchInputLabel = document.querySelector("#batchInputLabel");
 const exportBtn = document.querySelector("#exportBtn");
 const refreshBtn = document.querySelector("#refreshBtn");
 const statusText = document.querySelector("#statusText");
@@ -206,19 +217,31 @@ function renderExtracted(data) {
 }
 
 async function extractLead() {
-  const rawEmail = emailInput.value.trim();
-  if (!rawEmail) {
-    setStatus("请先粘贴客户邮件。", true);
+  const rawText = emailInput.value.trim();
+  if (!rawText) {
+    setStatus(state.inputMode === "wechat" ? "请先粘贴微信聊天内容。" : "请先粘贴客户邮件。", true);
     return;
   }
   extractBtn.disabled = true;
   setStatus("正在抽取客户线索...");
   try {
-    const data = await api("/api/leads/extract", {
-      method: "POST",
-      body: JSON.stringify({ raw_email: rawEmail }),
-    });
-    state.rawEmail = rawEmail;
+    let data;
+    if (state.inputMode === "wechat") {
+      const result = await api("/api/leads/extract-wechat", {
+        method: "POST",
+        body: JSON.stringify({ chat_text: rawText, source: "manual", channel: "wechat" }),
+      });
+      state.rawEmail = result.raw_text;
+      state.sourceChannel = "manual:wechat";
+      data = result.extracted;
+    } else {
+      data = await api("/api/leads/extract", {
+        method: "POST",
+        body: JSON.stringify({ raw_email: rawText }),
+      });
+      state.rawEmail = rawText;
+      state.sourceChannel = "manual";
+    }
     state.extracted = data;
     renderExtracted(data);
     saveBtn.disabled = false;
@@ -237,7 +260,7 @@ async function saveLead() {
   try {
     const lead = await api("/api/leads", {
       method: "POST",
-      body: JSON.stringify({ raw_email: state.rawEmail, extracted: state.extracted }),
+      body: JSON.stringify({ raw_email: state.rawEmail, extracted: state.extracted, source_channel: state.sourceChannel }),
     });
     setStatus(`已保存线索 #${lead.id}，状态为待审核。`);
     await loadLeads();
@@ -246,6 +269,30 @@ async function saveLead() {
     setStatus(error.message, true);
   } finally {
     saveBtn.disabled = false;
+  }
+}
+
+function setInputMode(mode) {
+  state.inputMode = mode;
+  state.extracted = null;
+  state.rawEmail = "";
+  state.sourceChannel = mode === "wechat" ? "manual:wechat" : "manual";
+  saveBtn.disabled = true;
+  sourceButtons.forEach((button) => button.classList.toggle("active", button.dataset.source === mode));
+  if (mode === "wechat") {
+    inputTitle.textContent = "多渠道录入";
+    inputBodyLabel.textContent = "微信聊天文本";
+    emailInput.placeholder = "粘贴微信客户聊天内容，例如：客户：我们想采购 500 个太阳能庭院灯...";
+    batchInputLabel.style.display = "none";
+    batchImportBtn.style.display = "none";
+    setStatus("已切换到微信聊天导入。");
+  } else {
+    inputTitle.textContent = "邮件录入";
+    inputBodyLabel.textContent = "客户邮件正文";
+    emailInput.placeholder = "粘贴客户邮件正文...";
+    batchInputLabel.style.display = "";
+    batchImportBtn.style.display = "";
+    setStatus("已切换到邮件导入。");
   }
 }
 
@@ -436,12 +483,21 @@ async function exportCsv() {
 sampleButtons.forEach((button) => {
   button.addEventListener("click", () => {
     const sample = sampleEmails[button.dataset.sample];
+    if (button.dataset.sample === "wechat") {
+      setInputMode("wechat");
+    } else {
+      setInputMode("email");
+    }
     emailInput.value = sample;
     state.extracted = null;
     state.rawEmail = "";
+    state.sourceChannel = state.inputMode === "wechat" ? "manual:wechat" : "manual";
     saveBtn.disabled = true;
-    setStatus(`已填入${button.textContent}示例邮件。`);
+    setStatus(`已填入${button.textContent}示例内容。`);
   });
+});
+sourceButtons.forEach((button) => {
+  button.addEventListener("click", () => setInputMode(button.dataset.source));
 });
 extractBtn.addEventListener("click", extractLead);
 saveBtn.addEventListener("click", saveLead);

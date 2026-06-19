@@ -42,35 +42,45 @@ def normalize_company(value: str) -> str:
     return cleaned.strip(" .,:;") or "unknown"
 
 
+def normalize_product_need(value: str) -> str:
+    cleaned = re.sub(
+        r"^\d{2,6}\s*(?:pcs|pieces|units|sets|containers|cartons|个|件|套|台|箱)\s*",
+        "",
+        value,
+        flags=re.IGNORECASE,
+    )
+    cleaned = re.split(r"(?:，|,)?\s*(?:发到|发往|出口到|ship to|send to)\s*", cleaned, maxsplit=1, flags=re.IGNORECASE)[0]
+    return cleaned.strip(" .,:;，。") or value.strip(" .,:;，。")
+
+
 def infer_country(text: str) -> str:
-    countries = [
-        "Germany",
-        "United States",
-        "USA",
-        "Canada",
-        "Australia",
-        "United Kingdom",
-        "UK",
-        "France",
-        "Italy",
-        "Spain",
-        "Brazil",
-        "India",
-        "UAE",
-        "Saudi Arabia",
-        "Mexico",
-        "Netherlands",
-    ]
-    for country in countries:
-        if re.search(rf"\b{re.escape(country)}\b", text, re.IGNORECASE):
-            return "United States" if country == "USA" else "United Kingdom" if country == "UK" else country
+    country_aliases = {
+        "Germany": ["Germany", "德国"],
+        "United States": ["United States", "USA", "美国"],
+        "Canada": ["Canada", "加拿大"],
+        "Australia": ["Australia", "澳大利亚"],
+        "United Kingdom": ["United Kingdom", "UK", "英国"],
+        "France": ["France", "法国"],
+        "Italy": ["Italy", "意大利"],
+        "Spain": ["Spain", "西班牙"],
+        "Brazil": ["Brazil", "巴西"],
+        "India": ["India", "印度"],
+        "UAE": ["UAE", "阿联酋"],
+        "Saudi Arabia": ["Saudi Arabia", "沙特"],
+        "Mexico": ["Mexico", "墨西哥"],
+        "Netherlands": ["Netherlands", "荷兰"],
+    }
+    for normalized, aliases in country_aliases.items():
+        for alias in aliases:
+            if re.search(rf"(?<![A-Za-z]){re.escape(alias)}(?![A-Za-z])", text, re.IGNORECASE):
+                return normalized
     return "unknown"
 
 
 def infer_priority(text: str) -> tuple[str, str]:
     lowered = text.lower()
-    high_signals = ["urgent", "asap", "immediately", "this week", "deadline", "within 3 days"]
-    medium_signals = ["quotation", "quote", "price", "catalog", "sample", "lead time"]
+    high_signals = ["urgent", "asap", "immediately", "this week", "deadline", "within 3 days", "今天", "当天", "尽快", "马上", "本周", "这周", "急"]
+    medium_signals = ["quotation", "quote", "price", "catalog", "sample", "lead time", "报价", "价格", "样品", "目录", "交期", "采购"]
     if any(signal in lowered for signal in high_signals):
         return "high", "Email contains urgent timing signals such as ASAP, deadline, or this week."
     if any(signal in lowered for signal in medium_signals):
@@ -81,7 +91,7 @@ def infer_priority(text: str) -> tuple[str, str]:
 def infer_follow_up_time(priority: str, text: str) -> tuple[str, str]:
     lowered = text.lower()
     if priority == "high":
-        if "within 3 days" in lowered or "immediately" in lowered or "asap" in lowered:
+        if any(signal in lowered for signal in ["within 3 days", "immediately", "asap", "今天", "当天", "马上"]):
             return "same day", "Urgent words indicate the sales team should reply today."
         return "within 24 hours", "High-priority inquiry should be handled within 24 hours."
     if priority == "medium":
@@ -123,14 +133,16 @@ def extract_lead(raw_email: str) -> dict[str, Any]:
             r"(?:Best regards|Regards|Sincerely|Thanks|Thank you),?\s*\n\s*([A-Z][A-Za-z .'-]{1,40})",
             r"(?:I am|I'm|This is)\s+([A-Z][A-Za-z .'-]{1,40})(?:\s+(?:from|at)\b|[,.]|\n)",
             r"Name:\s*([^\n]+)",
+            r"(?:我是|我叫|客户姓名[:：])\s*([A-Za-z\u4e00-\u9fff .'-]{2,30})(?:，|。|,|\n)",
         ],
         text,
     )
     name = normalize_name(name) if name != "unknown" else name
     company = first_match(
         [
-            r"(?:from|at)\s+([A-Z][A-Za-z0-9&.,\- ]{2,60}?)(?:\s+(?:in|from)\s+[A-Z][A-Za-z ]+|\.|,|\n)",
+            r"\b(?:from|at)\b\s+([A-Z][A-Za-z0-9&.,\- ]{2,60}?)(?:\s+(?:in|from)\s+[A-Z][A-Za-z ]+|\.|,|\n)",
             r"Company:\s*([^\n]+)",
+            r"(?:来自|公司[:：])\s*([A-Za-z0-9\u4e00-\u9fff&.,\- ]{2,60})(?:，|。|,|\n)",
         ],
         text,
     )
@@ -139,13 +151,16 @@ def extract_lead(raw_email: str) -> dict[str, Any]:
         [
             r"(?:interested in|looking for|need|purchase|buy)\s+([A-Za-z0-9,\-\s]{3,80})(?:\.|,|\n)",
             r"(?:quotation for|quote for|price for)\s+([A-Za-z0-9,\-\s]{3,80})(?:\.|,|\n)",
+            r"(?:采购|需要|想要|想买|寻找|找|询价|报价)\s*([A-Za-z0-9\u4e00-\u9fff，、,\-\s]{2,80})(?:。|，|,|\n)",
         ],
         text,
     )
-    quantity = first_match([r"(\d{2,6}\s*(?:pcs|pieces|units|sets|containers|cartons))"], text)
+    product_need = normalize_product_need(product_need) if product_need != "unknown" else product_need
+    quantity = first_match([r"(\d{2,6}\s*(?:pcs|pieces|units|sets|containers|cartons|个|件|套|台|箱))"], text)
     budget = first_match(
         [
             r"(?:budget is|budget around|budget:)\s*(\$?[0-9,]+(?:\s*-\s*\$?[0-9,]+)?)",
+            r"(?:预算|价格预算|目标价)[:：]?\s*(?:大概|约|around)?\s*(\$?[0-9,]+(?:\s*-\s*\$?[0-9,]+)?\s*(?:美金|美元|USD)?)",
             r"(\$[0-9,]+(?:\s*-\s*\$[0-9,]+)?)",
         ],
         text,

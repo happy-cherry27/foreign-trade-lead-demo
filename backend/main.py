@@ -15,8 +15,19 @@ from .db import get_conn, init_db, insert_event, now_iso, row_to_lead
 from .extractor import extract_lead
 from .integrations.feishu import sync_to_feishu_bitable
 from .scoring import build_score
-from .schemas import BatchImportRequest, EmailWebhookRequest, ExtractRequest, LeadCreate, ReviewRequest
+from .schemas import BatchImportRequest, EmailWebhookRequest, ExtractRequest, LeadCreate, ReviewRequest, WechatExtractRequest
 from .services import create_lead_record
+
+
+def normalize_wechat_text(chat_text: str, source: str, channel: str) -> str:
+    return "\n".join(
+        [
+            "Source: WeChat chat inquiry",
+            f"Source channel: {source}:{channel}",
+            "",
+            chat_text.strip(),
+        ]
+    )
 
 
 app = FastAPI(
@@ -77,7 +88,15 @@ def extract_endpoint(payload: ExtractRequest) -> dict[str, Any]:
 
 @app.post("/api/leads")
 def create_lead(payload: LeadCreate) -> dict[str, Any]:
-    return create_lead_record(payload.raw_email, payload.extracted, "manual")
+    return create_lead_record(payload.raw_email, payload.extracted, payload.source_channel)
+
+
+@app.post("/api/leads/extract-wechat")
+def extract_wechat_endpoint(payload: WechatExtractRequest) -> dict[str, Any]:
+    normalized_text = normalize_wechat_text(payload.chat_text, payload.source, payload.channel)
+    extracted = extract_lead(normalized_text)
+    extracted["source_channel"] = f"{payload.source}:{payload.channel}"
+    return {"raw_text": normalized_text, "extracted": extracted}
 
 
 @app.post("/api/webhooks/email")

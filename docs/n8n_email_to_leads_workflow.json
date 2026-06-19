@@ -1,0 +1,61 @@
+{
+  "name": "Email inquiry to foreign-trade lead system",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "foreign-trade-email-inquiry",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://foreign-trade-lead-demo.onrender.com/api/webhooks/email",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"subject\": $json.body.subject || \"Inbound inquiry from n8n\",\n  \"sender\": $json.body.sender || $json.body.from || \"unknown\",\n  \"body\": $json.body.body || $json.body.text || $json.body.message || \"\",\n  \"source\": \"n8n\",\n  \"channel\": \"webhook\"\n}",
+        "options": {}
+      },
+      "id": "send-to-lead-system",
+      "name": "Send to Lead System",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        280,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Send to Lead System",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2026-06-19T00:00:00.000Z",
+  "versionId": "foreign-trade-lead-demo-n8n-workflow"
+}

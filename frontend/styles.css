@@ -176,11 +176,24 @@ button:disabled {
   margin-top: 12px;
 }
 
+.input-actions {
+  display: grid;
+  gap: 8px;
+  justify-items: end;
+}
+
+.source-mode,
 .sample-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
   justify-content: flex-end;
+}
+
+.source-btn.active {
+  background: var(--accent);
+  color: #ffffff;
+  border-color: var(--accent);
 }
 
 .status-text {

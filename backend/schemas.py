@@ -12,6 +12,7 @@ class ExtractRequest(BaseModel):
 class LeadCreate(BaseModel):
     raw_email: str
     extracted: dict[str, Any]
+    source_channel: str = "manual"
 
 
 class ReviewRequest(BaseModel):
@@ -26,6 +27,12 @@ class EmailWebhookRequest(BaseModel):
     body: str = Field(min_length=10)
     source: str = "n8n"
     channel: str = "email"
+
+
+class WechatExtractRequest(BaseModel):
+    chat_text: str = Field(min_length=10)
+    source: str = "manual"
+    channel: str = "wechat"
 
 
 class BatchEmailItem(BaseModel):

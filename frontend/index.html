@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>外贸客户邮件线索自动录入与跟进建议系统</title>
-  <link rel="stylesheet" href="/static/styles.css?v=20260618-longtext">
+  <link rel="stylesheet" href="/static/styles.css?v=20260619-multichannel">
 </head>
 <body>
   <header class="app-header">
@@ -25,15 +25,22 @@
           <p class="eyebrow">Step 1</p>
           <h2 id="inputTitle">邮件录入</h2>
         </div>
-        <div class="sample-actions" aria-label="示例邮件">
-          <button class="ghost-button sample-btn" type="button" data-sample="complete">完整</button>
-          <button class="ghost-button sample-btn" type="button" data-sample="missing">缺字段</button>
-          <button class="ghost-button sample-btn" type="button" data-sample="urgent">紧急</button>
+        <div class="input-actions">
+          <div class="source-mode" aria-label="线索来源">
+            <button class="ghost-button source-btn active" type="button" data-source="email">邮件</button>
+            <button class="ghost-button source-btn" type="button" data-source="wechat">微信聊天</button>
+          </div>
+          <div class="sample-actions" aria-label="示例内容">
+            <button class="ghost-button sample-btn" type="button" data-sample="complete">完整</button>
+            <button class="ghost-button sample-btn" type="button" data-sample="missing">缺字段</button>
+            <button class="ghost-button sample-btn" type="button" data-sample="urgent">紧急</button>
+            <button class="ghost-button sample-btn" type="button" data-sample="wechat">微信样例</button>
+          </div>
         </div>
       </div>
-      <label for="emailInput">客户邮件正文</label>
+      <label id="inputBodyLabel" for="emailInput">客户邮件正文</label>
       <textarea id="emailInput" spellcheck="false" placeholder="粘贴客户邮件正文..."></textarea>
-      <label for="batchInput">批量导入 txt / eml 邮件<input id="batchInput" type="file" accept=".txt,.eml" multiple></label>
+      <label id="batchInputLabel" for="batchInput">批量导入 txt / eml 邮件<input id="batchInput" type="file" accept=".txt,.eml" multiple></label>
       <div class="button-row">
         <button id="extractBtn" type="button">抽取客户线索</button>
         <button id="saveBtn" type="button" disabled>保存线索</button>
@@ -119,7 +126,7 @@
         </div>
       </form>
       <details class="raw-email">
-        <summary>原始邮件</summary>
+        <summary>原始内容</summary>
         <pre id="rawEmailText"></pre>
       </details>
       <div class="evidence-box">
@@ -129,6 +136,6 @@
     </section>
   </main>
 
-  <script src="/static/app.js"></script>
+  <script src="/static/app.js?v=20260619-multichannel"></script>
 </body>
 </html>

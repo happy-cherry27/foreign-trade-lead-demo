@@ -1067,14 +1067,14 @@
         <span class="label">AI 工程闭环 Demo · 外贸销售场景</span>
         <h1>外贸客户邮件线索自动录入与跟进建议系统</h1>
         <p class="hero-copy">
-          面向外贸销售的客户询盘处理系统：把邮件自动抽取成结构化线索，计算销售优先级，生成英文回复草稿和缺字段追问，并通过人工审核、飞书同步和 timeline 留痕形成可追责闭环。
+          面向外贸销售的客户询盘处理系统：支持邮件、n8n webhook 和微信聊天文本等多渠道入口，把询盘自动抽取成结构化线索，计算销售优先级，生成英文回复草稿和缺字段追问，并通过人工审核、飞书同步和 timeline 留痕形成可追责闭环。
         </p>
         <div class="hero-actions">
           <a class="button" href="/app" target="_blank" rel="noopener noreferrer">进入系统演示</a>
           <a class="button secondary" href="#demo">查看演示路径</a>
         </div>
         <div class="summary-strip">
-          <div class="summary"><strong>自动录入</strong><span>从邮件正文抽取客户、公司、国家、产品、预算、数量等关键字段。</span></div>
+          <div class="summary"><strong>多渠道录入</strong><span>从邮件正文、n8n webhook 或微信聊天文本抽取客户、公司、国家、产品、预算、数量等关键字段。</span></div>
           <div class="summary"><strong>优先跟进</strong><span>用 lead_score 判断高意向询盘，帮助销售先处理更可能成交的客户。</span></div>
           <div class="summary"><strong>可追责</strong><span>AI 抽取、人审、同步、失败重试全部进入 timeline。</span></div>
         </div>
@@ -1137,11 +1137,11 @@
 
     <section id="workflow">
       <div class="section-head">
-        <h2>从邮件进入，到飞书同步，完整闭环。</h2>
-        <p>这条链路可以通过手动录入、批量导入，或 n8n webhook 触发。确认后的线索才能进入飞书或正式 CRM。</p>
+        <h2>从多渠道询盘进入，到飞书同步，完整闭环。</h2>
+        <p>这条链路可以通过手动录入、批量导入、n8n webhook 或微信聊天文本触发。确认后的线索才能进入飞书或正式 CRM。</p>
       </div>
       <div class="flow">
-        <div class="flow-step"><b>01</b><strong>邮件进入</strong><span>手动粘贴、批量导入，或 n8n 调用 `/api/webhooks/email`。</span></div>
+        <div class="flow-step"><b>01</b><strong>询盘进入</strong><span>邮件粘贴、批量导入、n8n 调用 `/api/webhooks/email`，或微信聊天文本导入。</span></div>
         <div class="flow-step"><b>02</b><strong>字段抽取</strong><span>抽取客户、公司、国家、产品、预算、数量、电话等字段。</span></div>
         <div class="flow-step"><b>03</b><strong>线索评分</strong><span>根据紧急程度、商业价值、联系完整度等计算 lead_score。</span></div>
         <div class="flow-step"><b>04</b><strong>跟进建议</strong><span>生成英文回复草稿和缺字段追问，帮助销售快速响应。</span></div>
@@ -1156,7 +1156,7 @@
         <p>展示页面强调的是已经实现的能力，不是未来规划。每一项都能在系统界面或接口中对应到。</p>
       </div>
       <div class="capabilities">
-        <article class="capability-card"><b>01</b><h3>n8n Webhook 入口</h3><p>提供 `/api/webhooks/email`，可由 n8n Email Trigger + HTTP Request 调用。</p></article>
+        <article class="capability-card"><b>01</b><h3>多渠道入口</h3><p>支持邮件录入、n8n webhook 和微信聊天文本导入，统一进入线索抽取流程。</p></article>
         <article class="capability-card"><b>02</b><h3>字段级证据</h3><p>每个字段带 value、confidence 和 source_snippet，便于人工审核。</p></article>
         <article class="capability-card"><b>03</b><h3>Lead Score</h3><p>透明规则评分，用于判断销售应该优先跟进哪条线索。</p></article>
         <article class="capability-card"><b>04</b><h3>回复草稿与追问</h3><p>自动生成英文回复草稿，并针对缺失字段生成追问问题。</p></article>
@@ -1177,6 +1177,7 @@
           <div class="cmd">Core API</div>
           <pre>POST /api/webhooks/email
 POST /api/leads/extract
+POST /api/leads/extract-wechat
 POST /api/leads/import-batch
 PATCH /api/leads/{id}/review
 POST /api/leads/{id}/sync/feishu
@@ -1184,7 +1185,7 @@ GET  /api/leads/{id}/logs</pre>
         </div>
         <div class="module-list">
           <div class="module-card"><h3>backend/main.py</h3><p>FastAPI 路由入口，负责请求编排。</p></div>
-          <div class="module-card"><h3>backend/extractor.py</h3><p>邮件抽取、字段级证据和基础意图识别。</p></div>
+          <div class="module-card"><h3>backend/extractor.py</h3><p>邮件/微信聊天抽取、字段级证据和基础意图识别。</p></div>
           <div class="module-card"><h3>backend/scoring.py</h3><p>lead_score 与 score_breakdown 评分规则。</p></div>
           <div class="module-card"><h3>backend/followup.py</h3><p>英文回复草稿和缺字段追问生成。</p></div>
           <div class="module-card"><h3>backend/integrations/feishu.py</h3><p>飞书 Bitable OpenAPI 同步适配。</p></div>
