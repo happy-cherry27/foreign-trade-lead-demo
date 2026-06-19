@@ -1197,14 +1197,38 @@ GET  /api/leads/{id}/logs</pre>
     <section id="proof">
       <div class="section-head">
         <h2>用实机截图证明完整销售运营闭环。</h2>
-        <p>同一封 NorthPeak Supplies 模拟询盘贯穿所有步骤。点击任一环节可放大查看系统截图，既保留证据，又避免页面被静态大图打断。</p>
+        <p>邮件和微信聊天都可以作为询盘入口，后续统一进入抽取、评分、人审和飞书同步流程。点击任一环节可放大查看系统截图。</p>
       </div>
       <div class="proof-accordion" aria-label="可放大的系统截图步骤">
-        <article class="proof-step-card" role="button" tabindex="0" data-proof-image="/show_pictures/Step1_邮件录入界面.png" data-proof-title="STEP 01 · 邮件录入界面">
-          <b>STEP 01 · 邮件进入</b>
+        <article class="proof-step-card" role="button" tabindex="0" data-proof-image="/show_pictures/Step1_邮件录入界面.png" data-proof-title="STEP 01A · 邮件录入界面">
+          <b>STEP 01A · 邮件进入</b>
           <div>
             <h3>邮件录入页：粘贴客户邮件正文，并支持 txt / eml 批量导入。</h3>
             <p>截图展示样例邮件按钮、邮件正文输入框、文件选择、抽取客户线索、保存线索和批量导入入口。</p>
+          </div>
+          <span class="proof-open">查看截图</span>
+        </article>
+        <article class="proof-step-card" role="button" tabindex="0" data-proof-image="/show_pictures/微信聊天文本录入.png" data-proof-title="STEP 01B · 微信聊天文本录入">
+          <b>STEP 01B · 微信聊天</b>
+          <div>
+            <h3>微信聊天录入页：粘贴客户对话文本，作为非邮件询盘入口。</h3>
+            <p>截图展示邮件 / 微信聊天切换、微信样例按钮，以及从聊天文本抽取客户需求、预算、地区和紧急程度的入口。</p>
+          </div>
+          <span class="proof-open">查看截图</span>
+        </article>
+        <article class="proof-step-card" role="button" tabindex="0" data-proof-image="/show_pictures/n8n_1.png" data-proof-title="STEP 01C · n8n HTTP Request 执行结果">
+          <b>STEP 01C · n8n 流入</b>
+          <div>
+            <h3>n8n 执行页：HTTP Request 调用系统 webhook，并返回抽取结果。</h3>
+            <p>截图展示 n8n 把邮件 JSON 推送到 `/api/webhooks/email` 后，系统返回 lead、extracted、lead_score 和字段证据。</p>
+          </div>
+          <span class="proof-open">查看截图</span>
+        </article>
+        <article class="proof-step-card" role="button" tabindex="0" data-proof-image="/show_pictures/n8n_2.png" data-proof-title="STEP 01D · n8n 自动入库结果">
+          <b>STEP 01D · 自动入库</b>
+          <div>
+            <h3>线索列表页：n8n 推送后的询盘已自动保存为待审核线索。</h3>
+            <p>截图展示 Anna Keller 线索来源为 `n8n:gmail`，说明它不是手动粘贴，而是由 n8n webhook 自动流入。</p>
           </div>
           <span class="proof-open">查看截图</span>
         </article>
