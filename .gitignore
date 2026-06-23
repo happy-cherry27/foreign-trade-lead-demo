@@ -18,9 +18,14 @@ env/
 outputs/
 memory/
 
-# Local presentation/interview notes
+# Local presentation notes and large media
 docs/interview_demo_and_qa.md
+docs/demo_video_script.md
 showcase_trade_ai_interaction_交接说明.md
+项目简介及网址.txt
+*.mp4
+视频压缩检查帧.png
+飞书上传分段视频/
 
 # OS/editor files
 .DS_Store

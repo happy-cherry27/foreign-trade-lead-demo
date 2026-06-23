@@ -40,6 +40,6 @@ docs/n8n_email_to_leads_workflow.json
 }
 ```
 
-## 面试表达
+## 设计说明
 
 我没有把系统强绑定到 Gmail 或某一个企业邮箱，而是提供了 n8n 友好的 webhook 入口。真实业务里，Gmail、IMAP、表单、CRM 或其他数据源都可以通过 n8n HTTP Request 把询盘推到系统，后续统一进入 AI 抽取、人审、评分和飞书同步流程。
